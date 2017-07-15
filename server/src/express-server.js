@@ -3,6 +3,7 @@ import express from 'express';
 import API from 'json-api';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
+import path from 'path';
 
 import dbUsers from './models/users';
 import authenticationService from './services/authentication';
@@ -51,6 +52,11 @@ const apiReqHandler = front.apiRequest.bind(front);
 app.options('/api/*', (req, res) => {
   res.send();
 });
+
+if (process.env.ENV === 'prod') {
+  // Serve static assets
+  app.use(express.static(path.resolve(__dirname, '../../client', 'build')));
+}
 
 app.use('/api/users/', authenticationService());
 
