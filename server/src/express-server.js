@@ -24,6 +24,9 @@ if (process.env.ENV === 'dev') {
     next();
   });
   app.use(morgan('dev'));
+} else {
+  // Serve static assets
+  app.use(express.static(path.resolve(__dirname, '../../client', 'build')));
 }
 
 const models = {
@@ -52,11 +55,6 @@ const apiReqHandler = front.apiRequest.bind(front);
 app.options('/api/*', (req, res) => {
   res.send();
 });
-
-if (process.env.ENV === 'prod') {
-  // Serve static assets
-  app.use(express.static(path.resolve(__dirname, '../../client', 'build')));
-}
 
 app.use('/api/users/', authenticationService());
 
