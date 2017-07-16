@@ -7,7 +7,7 @@ web:
   build: .
   command: npm start
   volumes:
-    - .:/myapp
+    - app:/app
   ports:
     - "4000:4000"
   links:
