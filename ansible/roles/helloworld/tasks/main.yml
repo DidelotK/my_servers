@@ -1,0 +1,10 @@
+---
+- name: Apt update
+  apt:
+    update_cache: yes
+
+- name: Create the helloworld file
+  file:
+      path=/home/ubuntu/helloword.txt
+      state=touch
+      mode="u+rw,g-wx,o-rwx"

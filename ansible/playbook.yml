@@ -1,0 +1,7 @@
+---
+- name: Config web server to host the react express app
+  hosts: webservers
+  remote_user: ubuntu
+  become: true
+  roles:
+    - helloworld

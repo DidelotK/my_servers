@@ -1,0 +1,6 @@
+[webservers:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_ssh_private_key_file=./key_react_express.pem
+
+[webservers]
+52.59.242.52
