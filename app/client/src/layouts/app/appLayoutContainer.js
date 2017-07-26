@@ -1,9 +1,10 @@
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import {locationChange} from '../../actions/appActions';
+import { appInit, locationChange } from '../../actions/appActions';
 import AppLayout from './appLayout';
 
 const dispatchToProps = dispatch => ({
+  appInit: pathname => dispatch(appInit(pathname)),
   locationChange: pathname => dispatch(locationChange(
     pathname
   ))

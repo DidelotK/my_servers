@@ -1,6 +1,6 @@
 import appSagas from './appSagas';
 
-export default function*() {
+export default function* () {
   yield [
     appSagas()
   ];
