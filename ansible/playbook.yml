@@ -1,7 +1,17 @@
 ---
-- name: Config web server to host the react express app
+########## PLAYBOOK ##########
+
+- name: Create new user
   hosts: webservers
   remote_user: ubuntu
-  become: true
+  become: yes
   roles:
-    - helloworld
+    - user
+
+- name: Delete default user
+  hosts: webservers
+  remote_user: superuser
+  become: yes
+  tasks:
+    - shell : "killall -KILL -u ubuntu; userdel -fr ubuntu"
+  ignore_errors: yes

@@ -14,7 +14,11 @@ in the `ansible/hosts` file your hosts and the link to there ssh key like bellow
     [webservers]
     52.59.242.52 <--- HOST
 
+```bash
+openssl passwd -salt 'salt' -1 'password'
+```
+
 ## Launch server configuration
 ```bash
-ansible-playbook -i hosts playbook.yml
+ansible-playbook -i hosts --ask-sudo-pass playbook.yml
 ```

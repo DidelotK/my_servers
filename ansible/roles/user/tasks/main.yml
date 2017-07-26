@@ -1,0 +1,14 @@
+---
+- name: Create new user
+  user:
+    name: "{{ admin_user }}"
+    password: "{{ admin_user_password }}"
+    groups: sudo
+    shell: /bin/bash
+    append: yes
+
+- name: Set authorized key took from file
+  authorized_key:
+    user: "{{ admin_user }}"
+    state: present
+    key: "{{ lookup('file', remote_path_to_admin_user_ssh_key) }}"

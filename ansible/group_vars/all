@@ -1,0 +1,4 @@
+default_user: ubuntu
+admin_user: admin
+admin_user_password: $1$5646544d$uGuJN00SLyqq/IwvBNLjh.
+remote_path_to_admin_user_ssh_key: ~/.ssh/superuser_id_rsa.pub
