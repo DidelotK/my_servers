@@ -1,1 +1,4 @@
-export const API_CALL_SERVICE_ERROR = 'API_CALL_SERVICE_ERROR';
+export default {
+  MAX_TRIES: 3,
+  DELAY_BETWEEN_TRY: 1000
+};

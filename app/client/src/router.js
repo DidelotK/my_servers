@@ -15,6 +15,7 @@ export default(
     <Router history={ browserHistory }>
       <Route path='/' component={ AppLayout }>
         <IndexRoute component={ Home } />
+        <Route path='*' component={ Home } />
       </Route>
     </Router>
   </Provider>
