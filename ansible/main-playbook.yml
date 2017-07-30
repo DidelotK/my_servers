@@ -1,0 +1,13 @@
+---
+########## MAIN PLAYBOOK ##########
+#
+# This playbook assures that on the server
+# all the project dependencies are installed
+#
+#
+
+- hosts: webservers
+  remote_user: superuser
+  become: yes
+  roles:
+    - docker

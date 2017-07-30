@@ -4,7 +4,7 @@
 - [Ansible](http://docs.ansible.com/ansible)
 
 ## Update ansible hosts
-Ansible need to know the host where we want to launch the configuration so add
+Ansible need to know the host to launch the configuration so add
 in the `ansible/hosts` file your hosts and the link to there ssh key like bellow:
 
     [webservers:vars]

@@ -1,5 +1,10 @@
 ---
-########## PLAYBOOK ##########
+########## FIRST PLAYBOOK ##########
+#
+# This playbook create a new user and delete 
+# the default user from amazon (ubuntu)
+#
+#
 
 - name: Create new user
   hosts: webservers
