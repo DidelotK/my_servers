@@ -11,3 +11,18 @@
   become: yes
   roles:
     - docker
+# todo install and config nginx
+
+# Install docker cli in jenkins docker
+#- hosts: webservers
+#  remote_user: superuser
+#  become: yes
+#  tasks:
+#    - name: start jenkins docker
+#      shell: "sudo docker run -d --rm -p 8080:8080 -p 50000:50000 -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/usr/bin/docker jenkins/jenkins:lts"
+
+# Retoune l'id du container docker
+
+# sudo docker logs id_docker_container (To get the first admin password of jenkins)
+
+# docker build -t super_jenkins -f ./JenkinsDockerfile

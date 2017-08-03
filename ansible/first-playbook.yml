@@ -18,5 +18,5 @@
   remote_user: superuser
   become: yes
   tasks:
-    - shell : "killall -KILL -u ubuntu; userdel -fr ubuntu"
+    - shell: "killall -KILL -u ubuntu; userdel -fr ubuntu"
   ignore_errors: yes
