@@ -1,0 +1,49 @@
+# -*- mode: ruby -*-
+
+# Vagrant configs
+$vagrant_version = "2"
+# User configs
+$admin_user = "admin"
+$admin_user_path_ssh_key_public = "~/.ssh/superuser_id_rsa.pub"
+# Ansible configs
+$ansible_extra_vars = {
+  default_user: '',
+  admin_user: $admin_user,
+  remote_path_to_admin_user_ssh_key: $admin_user_path_ssh_key_public
+}
+$ansible_inventory = {
+  "all" => ["webapp", "controller"],
+  "all:vars" => {
+    "ansible_python_interpreter" => "/usr/bin/python3"
+  }
+}
+
+Vagrant.configure($vagrant_version) do |config|
+ 
+  # Define webapp machine
+  config.vm .define "webapp" do |webapp|
+    webapp.vm.box = "ubuntu/xenial64"
+    webapp.vm.hostname = "webapp"
+    webapp.vm.network "private_network", type: "dhcp"
+
+    $ansible_extra_vars['default_user'] = 'ubuntu'
+  end
+
+  # Define controller machine
+  config.vm.define "controller" do |controller|
+    controller.vm.box = "ubuntu/xenial64"
+    controller.vm.hostname = "controller"
+    controller.vm.network "private_network", type: "dhcp"
+
+    $ansible_extra_vars['default_user'] = 'ubuntu'
+  end
+
+  # Initialization servers
+  config.vm.provision "init", type: "ansible" do |ansible|
+    ansible.extra_vars = $ansible_extra_vars
+    ansible.groups = $ansible_inventory
+
+    ansible.playbook = "ansible/init.yml"
+  end
+
+end

@@ -1,0 +1,18 @@
+---
+########## FIRST PLAYBOOK ##########
+#
+# This playbook initialise all the server
+#
+
+- name: Create new user
+  hosts: all
+  remote_user: "{{ default_user }}"
+  become: yes
+  roles:
+    - user
+
+# Init controllers
+- include: controller.yml
+
+# Init sites
+# - include: webserver.yml

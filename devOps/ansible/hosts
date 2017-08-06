@@ -1,0 +1,11 @@
+webserver ansible_host=35.159.19.246
+
+[ec2]
+webserver
+
+[ec2:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_ssh_private_key_file=./key_webservers.pem
+
+[all]
+webserver

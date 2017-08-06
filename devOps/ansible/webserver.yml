@@ -1,0 +1,12 @@
+---
+########## SITE PLAYBOOK ##########
+#
+# Prepare webserver to host webapp
+#
+
+- hosts: webserver
+  remote_user: "{{ admin_user }}"
+  become: yes
+  roles:
+    - docker
+    - franklinkim.docker-compose
