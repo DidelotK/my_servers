@@ -5,6 +5,8 @@ db:
   command: "--smallfiles --logpath=/dev/null"
 web:
   build: .
+  environment:
+    NODE_ENV: production
   command: npm start
   volumes:
     - app:/app

@@ -1,10 +1,16 @@
 pipeline {
-    agent { docker 'node:6.3' }
+	def app
+
+    agent { docker 'node:7-onbuild' }
     stages {
+    	stage('Clone repository') {
+    		 /* Let's make sure we have the repository 
+    		 *  cloned to our workspace */
+
+        	checkout scm
+    	}
         stage('build') {
-            steps {
-                sh 'npm --version'
-            }
+			app = docker.build("didelotk/reactexpressapp")
         }
     }
 }

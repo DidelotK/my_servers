@@ -3,5 +3,13 @@
 - hosts: webservers
   remote_user: superuser
   tasks:
+    - name: Copy jenkins docker files in tmp
+      copy: 
+        src=../docker/jenkins
+        dest=/tmp
     - name: Run Jenkins
-      shell: "docker-compose up -f {{ lookup('file', '../docker/Jenkins') }}"
+      shell: "docker-compose -f '/tmp/jenkins/docker-compose.yml' up -d" 
+    - name: Delete docker files in tmp
+      file:
+        state: absent
+        path: /tmp/jenkins

@@ -3,11 +3,13 @@ services:
   jenkins:
     build: 
       context: .
-      dockerfile: JenkinsDockerfile
+      dockerfile: Dockerfile
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - $(which docker):/usr/bin/docker
-      - jenkins:/var/lib/jenkins
+      - /usr/bin/docker:/usr/bin/docker
+      - jenkins:/var/jenkins_home
     ports:
       - "8080:8080"
       - "50000:50000"
+volumes:
+  jenkins:

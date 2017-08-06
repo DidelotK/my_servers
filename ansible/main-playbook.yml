@@ -11,33 +11,28 @@
   become: yes
   roles:
     - docker
-    - role: nginx
-      nginx_http_params:
-        sendfile: &quot;on&quot;
-        access_log: &quot;/var/log/nginx/access.log&quot;
-      nginx_sites:
-       - server:
-          file_name: foo
-          listen: 8080
-          server_name: jenkins
-          root: &quot;/tmp/site1&quot;
-          location1: {name: /, try_files: &quot;$uri $uri/ /index.html&quot;}
-       - server:
-          file_name: bar
-          listen: 3000
-          server_name: webapp
-          root: &quot;/tmp/site2&quot;
-          location1: {name: /, try_files: &quot;$uri $uri/ /index.html&quot;}
+    - franklinkim.docker-compose
+#    - role: nginx
+#      nginx_http_params:
+#        sendfile: &quot;on&quot;
+#        access_log: &quot;/var/log/nginx/access.log&quot;
+#      nginx_sites:
+#       - server:
+#          file_name: foo
+#          listen: 8080
+#          server_name: jenkins
+#          root: &quot;/tmp/site1&quot;
+#          location1: {name: /, try_files: &quot;$uri $uri/ /index.html&quot;}
+#       - server:
+#          file_name: bar
+#          listen: 3000
+#          server_name: webapp
+#          root: &quot;/tmp/site2&quot;
+#          location1: {name: /, try_files: &quot;$uri $uri/ /index.html&quot;}
 
 # todo install and config nginx
 
 # Install docker cli in jenkins docker
-#- hosts: webservers
-#  remote_user: superuser
-#  become: yes
-#  tasks:
-#    - name: start jenkins docker
-#      shell: "sudo docker run -d --rm -p 8080:8080 -p 50000:50000 -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/usr/bin/docker jenkins/jenkins:lts"
 
 # Retoune l'id du container docker
 
@@ -46,3 +41,6 @@
 # docker build -t super_jenkins -f ./JenkinsDockerfile
 
 # sudo ansible-galaxy install -r requirements.yml -p ./roles
+
+# sudo chmod 777 /var/run/docker.sock A mettre dans le dockerfile de jenkins (sinon il ne pourra pas build de docker)
+
