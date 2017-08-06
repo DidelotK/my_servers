@@ -6,7 +6,7 @@ MAINTAINER Axel Camara <axel.camara@hotmail.fr>
 RUN mkdir -p /app
 
 # Bundle app source
-COPY app /app
+COPY /app /app
 
 # Install app dependencies
 RUN cd /app/client && npm install
