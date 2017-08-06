@@ -1,16 +1,20 @@
-db:
-  image: mongo
-  ports:
-    - "27017:27017"
-  command: "--smallfiles --logpath=/dev/null"
-web:
-  build: .
-  environment:
-    NODE_ENV: production
-  command: npm start
-  volumes:
-    - app:/app
-  ports:
-    - "4000:4000"
-  links:
-    - db
+version: '2'
+services:
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    command: "--smallfiles --logpath=/dev/null"
+  web:
+    build: .
+      context: ../../
+      dockerfile: ./docker/webapp
+    environment:
+      NODE_ENV: production
+    command: npm start
+    volumes:
+      - app:/app
+    ports:
+      - "4000:4000"
+    links:
+      - db
