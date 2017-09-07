@@ -47,15 +47,4 @@
 
     - role: jenkins
 
-# Install docker cli in jenkins docker
-
-# Retoune l'id du container docker
-
-# sudo docker logs id_docker_container (To get the first admin password of jenkins)
-
-# docker build -t super_jenkins -f ./JenkinsDockerfile
-
-# sudo ansible-galaxy install -r requirements.yml -p ./roles
-
-# sudo chmod 777 /var/run/docker.sock A mettre dans le dockerfile de jenkins (sinon il ne pourra pas build de docker)
-
+# Install docker cli in jenkins docker (à voir si toujours utile de build dans un docker)
