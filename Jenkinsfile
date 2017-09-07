@@ -4,24 +4,17 @@ pipeline {
         NODE_ENV = 'production'
     }
 
-    agent any
+    agent node
+
+    checkout scm
 
     stages {
 
-        stage('Clone repository') {
+        stage('Build React app') {
             steps {
-                /* Let's make sure we have the repository 
-                *  cloned to our workspace */
-
-                checkout scm
-            }
-        }
-
-        stage('Launch docker compose') {
-            steps {
-                sh 'ls'
-                sh 'cd docker/webapp'
-                sh 'docker-compose up -d'
+                sh 'cd app/client'
+                sh 'npm install'
+                sh 'npm run build'
             }
         }
 
