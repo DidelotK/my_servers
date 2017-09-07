@@ -4,7 +4,7 @@ pipeline {
         NODE_ENV = 'production'
     }
 
-    agent node
+    agent { docker 'node:6.3' }
 
     checkout scm
 
