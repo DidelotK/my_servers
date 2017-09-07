@@ -15,7 +15,6 @@
     jenkins_slaves_port: 50000
     pip_install_packages:
       - name: docker-py
-
   roles:
     - role: pip
 

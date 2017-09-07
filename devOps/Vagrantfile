@@ -40,7 +40,7 @@ Vagrant.configure($vagrant_version) do |config|
     ansible.extra_vars = $ansible_extra_vars
     ansible.groups = $ansible_inventory
 
-    ansible.playbook = "ansible/init.yml"
+    ansible.playbook = "ansible/init.configuration.yml"
   end
 
 end

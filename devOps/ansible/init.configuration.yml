@@ -19,7 +19,7 @@
     - user
 
 # Init controllers
-- include: controller.yml
+- include: controller.configuration.yml
 
 # Init sites
-# - include: webserver.yml
+# - include: webserver.configuration.yml
