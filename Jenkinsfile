@@ -6,9 +6,13 @@ pipeline {
 
     agent { docker 'node:6.3' }
 
-    checkout scm
-
     stages {
+
+        stage('Clone project') {
+            steps {
+                checkout scm
+            }
+        }
 
         stage('Build React app') {
             steps {
