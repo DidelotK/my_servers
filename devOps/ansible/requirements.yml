@@ -1,3 +1,10 @@
 ---
-- src: https://github.com/bennojoy/nginx
-- src: franklinkim.docker-compose
+
+- src: https://github.com/geerlingguy/ansible-role-nginx.git
+  name: nginx
+
+- src: https://github.com/geerlingguy/ansible-role-pip.git
+  name: pip
+
+- src: https://github.com/geerlingguy/ansible-role-docker.git
+  name: docker

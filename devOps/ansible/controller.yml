@@ -10,28 +10,42 @@
 - hosts: controller
   remote_user: "{{ admin_user }}"
   become: yes
-  roles:
-    - docker
-    - franklinkim.docker-compose
-#    - role: nginx
-#      nginx_http_params:
-#        sendfile: &quot;on&quot;
-#        access_log: &quot;/var/log/nginx/access.log&quot;
-#      nginx_sites:
-#       - server:
-#          file_name: foo
-#          listen: 8080
-#          server_name: jenkins
-#          root: &quot;/tmp/site1&quot;
-#          location1: {name: /, try_files: &quot;$uri $uri/ /index.html&quot;}
-#       - server:
-#          file_name: bar
-#          listen: 3000
-#          server_name: webapp
-#          root: &quot;/tmp/site2&quot;
-#          location1: {name: /, try_files: &quot;$uri $uri/ /index.html&quot;}
+  vars:
+    jenkins_port: 3000
+    jenkins_slaves_port: 50000
+    pip_install_packages:
+      - name: docker-py
 
-# todo install and config nginx
+  roles:
+    - role: pip
+
+    - role: docker
+      docker_install_compose: true
+      docker_compose_version: "1.15.0"
+      docker_compose_path: /usr/local/bin/docker-compose
+
+    - role: nginx
+      nginx_vhosts:
+        - listen: "80"
+          server_name: "jenkins.didelotkev.ovh"
+          extra_parameters: |
+            location / {
+                proxy_pass http://localhost:3000/;
+            }
+        - listen: "80"
+          server_name: "grafana.didelotkev.ovh"
+          extra_parameters: |
+            location / {
+                proxy_pass http://localhost:4000/;
+            }
+        - listen: "80"
+          server_name: "gitlab.didelotkev.ovh"
+          extra_parameters: |
+            location / {
+                proxy_pass http://localhost:5000/;
+            }
+
+    - role: jenkins
 
 # Install docker cli in jenkins docker
 

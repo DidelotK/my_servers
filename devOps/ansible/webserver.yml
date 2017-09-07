@@ -9,4 +9,6 @@
   become: yes
   roles:
     - docker
-    - franklinkim.docker-compose
+    - docker_compose
+    - nginx
+    - node

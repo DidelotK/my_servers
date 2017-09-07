@@ -7,15 +7,26 @@
 Ansible need to know the host to launch the configuration so add
 in the `ansible/hosts` file your hosts and the link to there ssh key like bellow:
 
-    [webservers:vars]
-    ansible_python_interpreter=/usr/bin/python3
-    ansible_ssh_private_key_file=./key_react_express.pem <--- SSH KEY
+	webserver ansible_host=35.159.19.246
 
-    [webservers]
-    52.59.242.52 <--- HOST
+	[ec2]
+	webserver
+
+	[ec2:vars]
+	ansible_python_interpreter=/usr/bin/python3
+	ansible_ssh_private_key_file=./key_webservers.pem
+
+	[all]
+	webserver
+
 
 ```bash
 openssl passwd -salt 'salt' -1 'password'
+```
+
+## Install ansible role requirements
+```bash
+ansible-galaxy install -p ./roles -r requirements.yml
 ```
 
 ## Launch server configuration
