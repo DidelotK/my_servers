@@ -7,6 +7,6 @@
 ## Local test
 
 ```bash
-cd devOps
+cd devOps/deploy
 vagrant up --provision
 ```
