@@ -16,6 +16,7 @@ pipeline {
 
         stage('Build React app') {
             steps {
+                sh 'npm cache clean --force'
                 sh 'cd app/client && npm install && npm run build'
             }
         }
