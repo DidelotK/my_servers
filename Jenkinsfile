@@ -4,7 +4,7 @@ pipeline {
         NODE_ENV = 'production'
     }
 
-    agent { docker 'node:6.3' }
+    agent { docker 'node:8.4' }
 
     stages {
 
@@ -16,9 +16,7 @@ pipeline {
 
         stage('Build React app') {
             steps {
-                sh 'cd app/client'
-                sh 'npm install'
-                sh 'npm run build'
+                sh 'cd app/client && npm install && npm run build'
             }
         }
 
