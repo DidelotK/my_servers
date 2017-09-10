@@ -11,6 +11,7 @@
     "redux-saga": "0.14.6"
   },
   "devDependencies": {
+    "create-react-app": "^1.4.0",
     "custom-react-scripts": "0.0.23"
   },
   "scripts": {

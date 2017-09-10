@@ -1,9 +1,5 @@
 pipeline {
 
-    environment {
-        NODE_ENV = 'production'
-    }
-
     agent { docker 'node:8.4' }
 
     stages {
@@ -16,17 +12,19 @@ pipeline {
 
         stage('Build React app') {
             steps {
-                sh 'npm cache clean --force'
                 sh 'cd app/client && npm install && npm run build'
+            }
+        }
+
+        stage('Tests') {
+            steps {
+                sh "echo 'On fait des tes test de ouf ici'"
             }
         }
 
         stage('Deploy') {
             when {
-                allOf {
-                    branch 'prod'
-                    environment name: 'NODE_ENV', value: 'production'
-                }
+                branch 'prod'
             }
             steps {
                 echo "Deploying"
