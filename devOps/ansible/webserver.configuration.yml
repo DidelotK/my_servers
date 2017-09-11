@@ -8,7 +8,15 @@
   remote_user: "{{ admin_user }}"
   become: yes
   roles:
-    - docker
-    - docker_compose
-    - nginx
-    - node
+    - role: docker
+
+    - role: nginx
+      nginx_vhosts:
+        - listen: "80"
+          server_name: "webapp.didelotkev.ovh"
+          extra_parameters: |
+            location / {
+                proxy_pass http://localhost:3000/;
+            }
+
+    - role: node

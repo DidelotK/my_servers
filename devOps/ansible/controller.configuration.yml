@@ -45,5 +45,3 @@
             }
 
     - role: jenkins
-
-# Install docker cli in jenkins docker (à voir si toujours utile de build dans un docker)

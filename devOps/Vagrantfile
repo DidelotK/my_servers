@@ -1,10 +1,13 @@
 # -*- mode: ruby -*-
 
+VAGRANT_COMMAND = ARGV[0]
+
 # Vagrant configs
 $vagrant_version = "2"
 # User configs
 $admin_user = "admin"
 $admin_user_path_ssh_key_public = "~/.ssh/superuser_id_rsa.pub"
+$admin_user_path_ssh_key_private = "~/.ssh/superuser_id_rsa"
 # Ansible configs
 $ansible_extra_vars = {
   default_user: '',
@@ -17,9 +20,15 @@ $ansible_inventory = {
 
 Vagrant.configure($vagrant_version) do |config|
  
+  if VAGRANT_COMMAND == "ssh"
+      config.ssh.username = $admin_user
+      config.ssh.private_key_path = $admin_user_path_ssh_key_private
+      config.ssh.forward_agent = true
+  end
+
   # Define webapp machine
   config.vm.define "webapp" do |webapp|
-    webapp.vm.box = "ubuntu/xenial64"
+    webapp.vm.box = "geerlingguy/ubuntu1604"
     webapp.vm.hostname = "webapp"
     webapp.vm.network "public_network", ip: "192.168.0.50"
 
@@ -34,7 +43,7 @@ Vagrant.configure($vagrant_version) do |config|
         v.cpus = 2
     end
 
-    controller.vm.box = "ubuntu/xenial64"
+    controller.vm.box = "geerlingguy/ubuntu1604"
     controller.vm.hostname = "controller"
     controller.vm.network "public_network", ip: "192.168.0.51"
 
