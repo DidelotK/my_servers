@@ -1,3 +1,5 @@
+def app
+
 pipeline {
 
     agent { docker 'node:8.4' }
@@ -13,6 +15,9 @@ pipeline {
         stage('Build React app') {
             steps {
                 sh 'cd app/client && npm install && npm run build'
+                script {
+                        app = docker.build("didelotkev/react-app", "-f devOps/jenkins/webapp/Dockerfile .")
+                }
             }
         }
 
@@ -20,6 +25,17 @@ pipeline {
             steps {
                 sh "echo 'On fait des tes test de ouf ici'"
             }
+        }
+
+        stage('Push image') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        app.push("latest")
+                    }
+                }     
+            }
+
         }
 
         stage('Deploy') {

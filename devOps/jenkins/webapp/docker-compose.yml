@@ -1,0 +1,16 @@
+version: '2'
+services:
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    command: "--smallfiles --logpath=/dev/null"
+  webapp:
+    image: didelotkev/react-app
+    environment:
+      NODE_ENV: production
+    command: npm start
+    ports:
+      - "4000:4000"
+    links:
+      - db
