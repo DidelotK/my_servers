@@ -2,7 +2,12 @@ def app
 
 pipeline {
 
-    agent { docker 'node:8.4' }
+    agent {
+        docker {
+            image 'node:8.4'
+            args "--volume /var/run/docker.sock:/var/run/docker.sock --volume /usr/bin/docker:/usr/bin/docker"
+        }
+    }
 
     stages {
 
