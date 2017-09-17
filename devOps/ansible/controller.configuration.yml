@@ -22,6 +22,10 @@
       docker_install_compose: true
       docker_compose_version: "1.15.0"
       docker_compose_path: /usr/local/bin/docker-compose
+      docker_daemon_options:
+        hosts:
+          - "unix:///var/run/docker.sock"
+          - "tcp://0.0.0.0:2375"
 
     - role: nginx
       nginx_vhosts:
@@ -29,7 +33,7 @@
           server_name: "jenkins.didelotkev.ovh"
           extra_parameters: |
             location / {
-                proxy_pass http://localhost:3000/;
+                proxy_pass http://localhost:8080/;
             }
         - listen: "80"
           server_name: "grafana.didelotkev.ovh"

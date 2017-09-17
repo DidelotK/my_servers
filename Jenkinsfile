@@ -5,7 +5,7 @@ pipeline {
     agent {
         docker {
             image 'node:8.4'
-            args "-H :2375 --volume /usr/bin/docker:/usr/bin/docker"
+            args "--network host -H :2375 --volume /usr/bin/docker:/usr/bin/docker"
         }
     }
 
