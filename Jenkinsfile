@@ -5,7 +5,7 @@ pipeline {
     agent {
         docker {
             image 'node:8.4'
-            args "--volume /var/run/docker.sock:/var/run/docker.sock --volume /usr/bin/docker:/usr/bin/docker"
+            args "-H :2375 --volume /usr/bin/docker:/usr/bin/docker"
         }
     }
 
@@ -21,7 +21,7 @@ pipeline {
             steps {
                 sh 'cd app/client && npm install && npm run build'
                 script {
-                        app = docker.build("didelotkev/react-app", "-f devOps/jenkins/webapp/Dockerfile .")
+                    app = docker.build("didelotkev/react-app", "-f devOps/jenkins/webapp/Dockerfile .")
                 }
             }
         }
