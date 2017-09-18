@@ -33,7 +33,7 @@
           server_name: "jenkins.didelotkev.ovh"
           extra_parameters: |
             location / {
-                proxy_pass http://localhost:8080/;
+                proxy_pass http://localhost:3000/;
             }
         - listen: "80"
           server_name: "grafana.didelotkev.ovh"
