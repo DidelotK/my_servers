@@ -1,11 +1,17 @@
 def app
 
 pipeline {
+    
+    environment {
+        
+    }
 
-    agent {
-        docker {
-            image 'node:8.4'
-            args "-H :2375 --volume /usr/bin/docker:/usr/bin/docker --network host"
+    withEnv('DOCKER_HOST = "tcp://:2375"') {
+        agent {
+            docker {
+                image 'node:8.4'
+                args "-H :2375 --volume /usr/bin/docker:/usr/bin/docker --network host"
+            }
         }
     }
 
