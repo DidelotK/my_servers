@@ -6,6 +6,7 @@ pipeline {
         docker {
             image 'node:8.4'
             args "-H :2375 --volume /usr/bin/docker:/usr/bin/docker --network host"
+            additionalBuildArgs "-H :2375"
         }
     }
 
