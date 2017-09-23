@@ -28,8 +28,3 @@ ansible-galaxy install -p ./roles -r requirements.yml
 ```bash
 ansible-playbook -i inventory --ask-sudo-pass --ask-vault-pass init.configuration.yml
 ```
-
-## Encrypt password for ansible
-```bash
-openssl passwd -salt 'salt' -1 'password'
-```
