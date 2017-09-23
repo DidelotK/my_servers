@@ -1,10 +1,10 @@
 ---
 
-- src: https://github.com/geerlingguy/ansible-role-nginx.git
-  name: nginx
-
 - src: https://github.com/geerlingguy/ansible-role-pip.git
   name: pip
 
+- src: https://github.com/ansible/role-secure-docker-daemon.git
+  name: docker-daemon-certificate
+  
 - src: https://github.com/DidelotK/ansible-role-docker.git
   name: docker

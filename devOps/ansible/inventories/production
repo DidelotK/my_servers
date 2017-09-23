@@ -1,4 +1,8 @@
 webserver ansible_host=35.159.19.246
+controller ansible_host=35.159.19.246
+
+[controllers]
+controller
 
 [ec2]
 webserver

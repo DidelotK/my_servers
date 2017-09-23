@@ -1,3 +1,5 @@
 .idea
-**/.vagrant
-**/*.log
+.vagrant
+*.log
+.vault_password
+.credentials

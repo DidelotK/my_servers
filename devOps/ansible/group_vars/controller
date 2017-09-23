@@ -1,3 +1,0 @@
-jenkins_port: 3000
-jenkins_slaves_port: 50000
-jenkins_server_name: "didelotkev.ovh"

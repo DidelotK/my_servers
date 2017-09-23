@@ -1,0 +1,5 @@
+jclouds-jenkins
+ssh-slaves
+token-macro
+durable-task
+docker-plugin

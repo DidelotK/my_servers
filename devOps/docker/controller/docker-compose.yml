@@ -1,0 +1,20 @@
+version: '2'
+services:
+  jenkinsdata:
+    build: jenkins-data
+  jenkinsmaster:
+    build: jenkins-master
+    volumes_from:
+      - jenkinsdata
+    ports:
+      - '50000:50000'
+    restart: always
+  nginx:
+    build: nginx
+    ports:
+       - '80:80'
+    links:
+       - jenkinsmaster:jenkins-master
+    restart: always
+  jenkinsnodeslave:
+    build: jenkins-node-slave
