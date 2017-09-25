@@ -27,6 +27,8 @@
       dds_client_cert_path: "{{ docker_tls_certs_path }}"
 
     - role: docker
+      docker_users:
+        - "{{ admin_user }}"
       docker_daemon_options:
         hosts:
           - "unix:///var/run/docker.sock"
