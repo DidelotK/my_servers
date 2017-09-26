@@ -3,7 +3,7 @@ import jshint from 'gulp-jshint';
 import eslint from 'gulp-eslint';
 import run from 'run-sequence';
 import rimraf from 'rimraf';
-import server from 'gulp-live-server';
+import gls from 'gulp-live-server';
 import babel from 'gulp-babel';
 import stylish from 'jshint-stylish';
 
@@ -18,11 +18,15 @@ const paths = {
 let express;
 
 gulp.task('default', (cb) => {
-  run('server', 'build', 'watch', cb);
+  run('server-init', 'build', 'watch', cb);
+});
+
+gulp.task('production', (cb) => {
+  run('server-production-init', 'clean', 'babel', 'start', cb);
 });
 
 gulp.task('build', (cb) => {
-  run('clean', 'lint', 'babel', 'restart', cb);
+  run('clean', 'lint', 'babel', 'start', cb);
 });
 
 // build when a file has changed
@@ -35,11 +39,20 @@ gulp.task('watch', () => {
 /*
  Server
  */
-gulp.task('server', () => {
-  express = server.new(paths.dest);
+gulp.task('server-init', () => {
+  express = gls.new(paths.dest);
 });
 
-gulp.task('restart', () => {
+gulp.task('server-production-init', () => {
+  const options = {
+    env: process.env
+  };
+  options.env.NODE_ENV = 'production';
+
+  express = gls(paths.dest, options);
+});
+
+gulp.task('start', () => {
   express.start.bind(express)();
 });
 

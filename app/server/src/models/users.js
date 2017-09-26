@@ -1,11 +1,10 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import BluebirdPromise from 'bluebird';
+import APP_CONSTANTS from '../constants/appConstants';
 
-dotenv.config();
 mongoose.Promise = BluebirdPromise;
 const Schema = mongoose.Schema;
-const self = process.env.SERVER_IP;
+const self = APP_CONSTANTS.SERVER_IP;
 
 const userSchema = Schema({
   email: { type: String, required: true, unique: true },

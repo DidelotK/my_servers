@@ -4,6 +4,8 @@ MAINTAINER Axel Camara <axel.camara@hotmail.fr>
 
 # Create app directory
 RUN mkdir -p /app
+# Create logs directory
+RUN mkdir -p /var/log/webapp
 
 # Bundle app source
 COPY app /app
@@ -24,4 +26,4 @@ EXPOSE 4000
 
 WORKDIR /app/server
 
-CMD ["npm", "start"]
+CMD ["npm", "run start-prod"]
