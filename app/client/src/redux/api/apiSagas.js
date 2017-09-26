@@ -1,13 +1,13 @@
-import { delay } from 'redux-saga';
-import { call, put, takeLatest } from 'redux-saga/effects';
-import { browserHistory } from 'react-router';
-import API_CONSTANTS from '../../constants/apiConstants';
+import {call, put, takeLatest} from 'redux-saga/effects';
+import {browserHistory} from 'react-router';
+
+import APP_CONSTANTS from '../../constants/appConstants';
 import HTTP_STATUS from '../../constants/httpStatusConstants';
-import { apiTypes } from './apiReducer';
+import {apiTypes} from './apiReducer';
 import TypeGenerator from '../TypeGenerator';
 
 const redirectToLogin = function* () {
-  yield call(browserHistory.push, '/login');
+  yield call(browserHistory.push, APP_CONSTANTS.LOGIN_PAGE);
 };
 
 const handleError = function* (err) {
@@ -21,32 +21,28 @@ const handleError = function* (err) {
   }
 };
 
+/**
+ * This function call a service from the api,
+ * and dispatch a global error if necessary
+ * @param apiService
+ * @param type
+ */
 export const callService = function* (apiService, type) {
-  let triesLeft = API_CONSTANTS.MAX_TRIES;
-  const delayBetweenTry = API_CONSTANTS.DELAY_BETWEEN_TRY;
+  try {
+    const res = yield call(apiService);
+    yield put({
+      type: TypeGenerator.failure(type),
+      resource: res
+    });
+    break;
+  } catch (err) {
 
-  while (triesLeft > 1) {
-    try {
-      const res = yield call(apiService);
-      yield put({
-        type: TypeGenerator.failure(type),
-        resource: res
-      });
-      break;
-    } catch (err) {
-      triesLeft--;
-      yield call(handleError, err);
-      if (triesLeft > 1) {
-        yield put({
-          type: TypeGenerator.retry(type)
-        });
-        yield call(delay, delayBetweenTry);
-      } else {
-        yield put({
-          type: TypeGenerator.failure(type)
-        });
-      }
-    }
+    yield call(handleError, err);
+
+    yield put({
+      type: TypeGenerator.failure(type)
+    });
+
   }
 };
 
