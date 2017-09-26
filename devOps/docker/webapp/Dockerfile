@@ -1,4 +1,4 @@
-FROM node:8.2.1
+FROM node:8.5.0
 
 MAINTAINER Axel Camara <axel.camara@hotmail.fr>
 
