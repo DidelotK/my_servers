@@ -1,0 +1,9 @@
+webserver ansible_host=192.168.0.50
+controller ansible_host=192.168.0.51
+
+[controllers]
+controller
+
+[all]
+webserver
+controller
