@@ -19,25 +19,19 @@ pipeline {
         stage('Build React app') {
             steps {
                 sh 'cd app/client && npm install && npm run build'
-                script {
-                    app = docker.build("didelotkev/react-app", "-f devOps/jenkins/webapp/Dockerfile . --tlsverify --tlscacert=/usr/local/etc/jenkins/certs/docker/ca.pem --tlscert=/usr/local/etc/jenkins/certs/docker/cert.pem --tlskey=/usr/local/etc/jenkins/certs/docker/key.pem -H=191.168.1.51:2376")
-                }
+                sh 'docker --tlsverify --tlscacert=/usr/local/etc/jenkins/certs/docker/ca.pem --tlscert=/usr/local/etc/jenkins/certs/docker/cert.pem --tlskey=/usr/local/etc/jenkins/certs/docker/key.pem -H=192.168.1.51:2376 build -f devOps/docker/webapp/Dockerfile -t webapp .'
             }
         }
 
         stage('Tests') {
             steps {
-                sh "echo 'On fait des tes test de ouf ici'"
+                sh "echo 'On fait des test de ouf ici'"
             }
         }
 
         stage('Push image') {
             steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        app.push("latest")
-                    }
-                }     
+                sh "echo 'On push'"
             }
 
         }
