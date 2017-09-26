@@ -13,6 +13,14 @@
   vars:
     docker_tls_certs_path: "/etc/ssl/certs/docker"
     jenkins_master_docker_path: "/home/{{ admin_user }}/docker/controller/jenkins-master"
+    jenkins_node_slave_docker_path: "/home/{{ admin_user }}/docker/controller/jenkins-node-slave"
+    docker_list_to_add_certs:
+      - "{{ jenkins_master_docker_path }}"
+      - "{{ jenkins_node_slave_docker_path }}"
+    certs_list:
+      - ca.pem
+      - cert.pem
+      - key.pem
     pip_install_packages:
       - name: docker-py
   roles:
@@ -52,18 +60,17 @@
         mode: 0644
         force: yes
 
-    - name: Copy local certificates to jenkins master image before build.
+    - name: Copy certificates to the folders of docker images that will use tcp to connect to host daemon.
       copy:
-        src: "{{ docker_tls_certs_path }}/{{ item }}"
-        dest: "{{ jenkins_master_docker_path }}/certs/{{ item }}"
+        src: "{{ docker_tls_certs_path }}/{{ item.1 }}"
+        dest: "{{ item.0 }}/certs/{{ item.1 }}"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         mode: 0644
         remote_src: yes
-      with_items:
-        - ca.pem
-        - cert.pem
-        - key.pem
+      with_nested:
+        - "{{ docker_list_to_add_certs }}"
+        - "{{ certs_list }}"
 
     - name: Start controller docker compose (nginx, jenkins).
       docker_service:

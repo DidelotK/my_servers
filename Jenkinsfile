@@ -20,7 +20,7 @@ pipeline {
             steps {
                 sh 'cd app/client && npm install && npm run build'
                 script {
-                    app = docker.build("didelotkev/react-app", "-f devOps/jenkins/webapp/Dockerfile .")
+                    app = docker.build("didelotkev/react-app", "-f devOps/jenkins/webapp/Dockerfile . --tlsverify --tlscacert=/usr/local/etc/jenkins/certs/docker/ca.pem --tlscert=/usr/local/etc/jenkins/certs/docker/cert.pem --tlskey=/usr/local/etc/jenkins/certs/docker/key.pem -H=191.168.1.51:2376")
                 }
             }
         }
