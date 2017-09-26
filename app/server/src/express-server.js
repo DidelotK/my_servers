@@ -1,18 +1,17 @@
-import dotenv from 'dotenv';
 import express from 'express';
 import API from 'json-api';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 import path from 'path';
 
+import APP_CONSTANTS from './constants/appConstants';
 import dbUsers from './models/users';
 import authenticationService from './services/authentication';
 
-dotenv.config();
 const app = express();
-mongoose.connect(process.env.MONGO, { useMongoClient: true });
+mongoose.connect(APP_CONSTANTS.MONGO, { useMongoClient: true });
 
-if (process.env.ENV === 'dev') {
+if (process.env.NODE_ENV === 'development') {
   const allowHeaders = ['Origin', 'X-Requested-With', 'Content-Type', 'Accept',
     'Cache-Control', 'Authorization'];
 

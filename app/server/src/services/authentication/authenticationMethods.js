@@ -1,15 +1,14 @@
-import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import uuid from 'uuid';
 import BluebirdPromise from 'bluebird';
 import dbUsers from '../../models/users';
+import APP_CONSTANTS from '../../constants/appConstants';
 
-dotenv.config();
 const verify = BluebirdPromise.promisify(jwt.verify);
 
 const authenticate = (req, res) => {
-  const token = jwt.sign({ token: uuid.v4() }, process.env.TOKEN_SECRET,
-    { expiresIn: process.env.TOKEN_EXPIRES });
+  const token = jwt.sign({ token: uuid.v4() }, APP_CONSTANTS.TOKEN_SECRET,
+    { expiresIn: APP_CONSTANTS.TOKEN_EXPIRES });
   dbUsers.actions.login(req.body.username, req.body.password, token)
     .then((doc) => {
       if (doc) {
@@ -24,7 +23,7 @@ const authenticate = (req, res) => {
 };
 
 const isAuthenticated = (req, res, next) => {
-  verify(req.body.token, process.env.TOKEN_SECRET)
+  verify(req.body.token, APP_CONSTANTS.TOKEN_SECRET)
     .then(() => dbUsers.actions.getUserByToken(req.body.token))
     .then((doc) => {
       req.user = doc;
