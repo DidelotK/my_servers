@@ -18,8 +18,7 @@ ADMIN_PATH_SSH_KEY_PRIVATE = 'ssh-keys/admin_id_rsa'
 # Ansible configs
 $ansible_extra_vars = {
     default_user: '',
-    admin_user: ADMIN_USER,
-    remote_path_to_admin_user_ssh_key: ADMIN_PATH_SSH_KEY_PUBLIC
+    admin_user: ADMIN_USER
 }
 $ansible_host_vars = {
     controller: {
