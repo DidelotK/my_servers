@@ -6,17 +6,25 @@
 
 #### SSH Key
 
+##### SSH to connect in servers (webapp , controllers)
+
 In order to connect via ssh in the futurs servers, create a ssh key with the following command.
 
 ```bash
 ssh-keygen -t rsa -b 4096
 ```
 
-<b>Note:</b> In stage environment you have to:
-    Set ssh key name to `superuser_id_rsa`
-    Put the key in `~/.ssh/`
+<b>Note:</b>
+    Set ssh key name to `admin_id_rsa`
+    Put the key in `devOps/ssh-keys/`
     
-Or you can change the configs in the `Vagrantfile` (`devOps/Vagrantfile`)
+##### SSH to make communication between webapp and controllers
+
+Same command as above
+
+<b>Note:</b>
+    Set ssh key name to `webapp_id_rsa`
+    Put the key in `devOps/ssh-keys/`
 
 #### Encrypt password
 
