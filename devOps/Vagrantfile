@@ -12,8 +12,8 @@ CONTROLLER_IP = '192.168.50.51'
 
 # User configs
 ADMIN_USER = 'admin'
-ADMIN_PATH_SSH_KEY_PUBLIC = '~/.ssh/superuser_id_rsa.pub'
-ADMIN_PATH_SSH_KEY_PRIVATE = '~/.ssh/superuser_id_rsa'
+ADMIN_PATH_SSH_KEY_PUBLIC = 'ssh-keys/admin_id_rsa.pub'
+ADMIN_PATH_SSH_KEY_PRIVATE = 'ssh-keys/admin_id_rsa'
 
 # Ansible configs
 $ansible_extra_vars = {
