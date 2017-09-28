@@ -37,11 +37,13 @@ pipeline {
         }
 
         stage('Deploy') {
+            agent none
+
             when {
                 branch 'prod'
             }
             steps {
-                echo "Deploying"
+                echo "Deploying to webapp server"
             }
         }
 
