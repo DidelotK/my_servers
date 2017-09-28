@@ -39,7 +39,7 @@ pipeline {
         }
 
         */
-        
+
         stage('Deploy') {
             agent none
 
@@ -48,6 +48,7 @@ pipeline {
             }
             steps {
                 echo "Deploying to webapp server"
+                sh "ls /usr/local/etc/jenkins/certs/docker"
             }
         }
 
