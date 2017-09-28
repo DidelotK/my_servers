@@ -16,6 +16,8 @@ pipeline {
             }
         }
 
+        /*
+
         stage('Build React app') {
             steps {
                 sh 'cd app/client && npm install && npm run build'
@@ -36,11 +38,13 @@ pipeline {
 
         }
 
+        */
+        
         stage('Deploy') {
             agent none
 
             when {
-                branch 'prod'
+                branch 'jenkins-deploy'
             }
             steps {
                 echo "Deploying to webapp server"
