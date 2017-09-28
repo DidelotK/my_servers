@@ -19,7 +19,7 @@ pipeline {
         stage('Build React app') {
             steps {
                 sh 'cd app/client && npm install && npm run build'
-                sh 'docker --tlsverify --tlscacert=/usr/local/etc/jenkins/certs/docker/ca.pem --tlscert=/usr/local/etc/jenkins/certs/docker/cert.pem --tlskey=/usr/local/etc/jenkins/certs/docker/key.pem -H=192.168.1.51:2376 build -f devOps/docker/webapp/Dockerfile -t webapp .'
+                sh 'docker --tlsverify --tlscacert=/usr/local/etc/jenkins/certs/docker/ca.pem --tlscert=/usr/local/etc/jenkins/certs/docker/cert.pem --tlskey=/usr/local/etc/jenkins/certs/docker/key.pem -H=192.168.50.51:2376 build -f devOps/docker/webapp/Dockerfile -t webapp .'
             }
         }
 
