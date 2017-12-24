@@ -34,7 +34,6 @@ export const callService = function* (apiService, type) {
       type: TypeGenerator.failure(type),
       resource: res
     });
-    break;
   } catch (err) {
 
     yield call(handleError, err);

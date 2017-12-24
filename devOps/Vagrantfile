@@ -7,19 +7,18 @@ VAGRANT_COMMAND = ARGV[0]
 VAGRANT_VERSION = '2'
 
 # Network configs
-WEBAPP_IP = '192.168.1.50'
-CONTROLLER_IP = '192.168.1.51'
+WEBAPP_IP = '192.168.50.50'
+CONTROLLER_IP = '192.168.50.51'
 
 # User configs
 ADMIN_USER = 'admin'
-ADMIN_PATH_SSH_KEY_PUBLIC = '~/.ssh/superuser_id_rsa.pub'
-ADMIN_PATH_SSH_KEY_PRIVATE = '~/.ssh/superuser_id_rsa'
+ADMIN_PATH_SSH_KEY_PUBLIC = 'ssh-keys/admin_id_rsa.pub'
+ADMIN_PATH_SSH_KEY_PRIVATE = 'ssh-keys/admin_id_rsa'
 
 # Ansible configs
 $ansible_extra_vars = {
     default_user: '',
-    admin_user: ADMIN_USER,
-    remote_path_to_admin_user_ssh_key: ADMIN_PATH_SSH_KEY_PUBLIC
+    admin_user: ADMIN_USER
 }
 $ansible_host_vars = {
     controller: {

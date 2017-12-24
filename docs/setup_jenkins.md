@@ -19,11 +19,6 @@ Click on “Configure System”
 Scroll down until you find “Add new cloud” as a drop down (this comes from the Jclouds plugin)
 Select “Docker” from the drop down
 
-Client Key => key.pem
-Client Certificate => cert.pem
-Server CA Certificate => ca.pem
-
-
 ## More info in this tutorial
 (not totally correct with this jenkins version)
 https://engineering.riotgames.com/news/jenkins-ephemeral-docker-tutorial

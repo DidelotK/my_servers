@@ -5,23 +5,22 @@
 #
 
 - hosts: all
+  remote_user: "{{ default_user }}"
   become: true
   gather_facts: false
   tasks:
     - name: Install python 2.
       raw: test -e /usr/bin/python || (apt-get -y update && apt-get install -y python-minimal)
+
     - name: Set default locale.
       lineinfile: dest=/etc/default/locale
         regexp="LC_ALL"
         line="LC_ALL=\"en_US.UTF-8\""
+
     - name: Update apt.
       apt:
         update_cache: yes
 
-- hosts: all
-  remote_user: "{{ default_user }}"
-  become: true
-  tasks:
     - name: Create new user
       user:
         name: "{{ admin_user }}"
@@ -30,8 +29,30 @@
         shell: /bin/bash
         append: yes
 
-    - name: Set authorized key
+    - name: Set authorized key.
       authorized_key:
         user: "{{ admin_user }}"
         state: present
-        key: "{{ lookup('file', remote_path_to_admin_user_ssh_key) }}"
+        key: "{{ lookup('file', path_to_ssh_admin_public_keys) }}"
+
+- hosts: controllers
+  remote_user: "{{ admin_user }}"
+  become: yes
+  tasks:
+    - name: Copy ssh access files to webapp.
+      copy:
+        src: "{{ path_to_ssh_webapp_private_keys }}"
+        dest: "/home/{{ admin_user }}/.ssh/webapp_id_rsa"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: 0400
+
+- hosts: webapp
+  remote_user: "{{ admin_user }}"
+  become: yes 
+  tasks:
+    - name: Add authorized key for controllers.
+      authorized_key:
+        user: "{{ admin_user }}"
+        state: present
+        key: "{{ lookup('file', path_to_ssh_webapp_public_keys) }}"

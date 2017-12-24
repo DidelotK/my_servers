@@ -1,4 +1,4 @@
-ssh-slaves:1.6
-token-macro:1.7
-durable-task:1.3
+ssh-slaves
+token-macro
+durable-task
 docker-plugin:0.16.2
