@@ -26,5 +26,5 @@ ansible-galaxy install -p ./roles -r requirements.yml
 
 ## Launch servers configuration (controller + webserver)
 ```bash
-ansible-playbook -i inventory --ask-sudo-pass --ask-vault-pass init.configuration.yml
+ansible-playbook controllers.configuration.yml --ask-sudo-pass -i ./inventories/production --vault-password-file .vault_password -e admin_user=admin
 ```
