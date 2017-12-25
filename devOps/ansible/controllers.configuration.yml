@@ -14,6 +14,7 @@
     docker_tls_certs_path: "/etc/ssl/certs/docker"
     jenkins_master_docker_path: "/home/{{ admin_user }}/docker/controller/jenkins-master"
     jenkins_node_slave_docker_path: "/home/{{ admin_user }}/docker/controller/jenkins-node-slave"
+    docker0_master_ip: 172.17.0.1
     docker_list_to_add_certs:
       - "{{ jenkins_master_docker_path }}"
       - "{{ jenkins_node_slave_docker_path }}"
@@ -40,7 +41,7 @@
       docker_daemon_options:
         hosts:
           - "unix:///var/run/docker.sock"
-          - "tcp://{{ ansible_host }}:2376"
+          - "tcp://{{ docker0_master_ip }}:2376"
         tlsverify: true
         tlscacert: "{{ dds_server_cert_path }}/ca.pem"
         tlscert: "{{ dds_server_cert_path }}/server-cert.pem"
