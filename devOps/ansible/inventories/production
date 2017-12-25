@@ -1,5 +1,5 @@
 webserver ansible_host=35.159.19.246
-controller ansible_host=35.159.19.246
+controller ansible_host=93.30.223.70
 
 [controllers]
 controller
