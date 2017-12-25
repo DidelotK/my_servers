@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 
-# Restart nginx
-service nginx restart
-
 # Configure HTTPS with Certbox
-certbot --nginx
+certbot --nginx --non-interactive --agree-tos --redirect -m didelotkev@gmail.com -d cv.didelotkev.ovh -d jenkins.didelotkev.ovh
 
 # Automating renewal HTTPS certificates
 certbot renew --dry-run
