@@ -17,7 +17,7 @@ COPY conf/jenkins.conf /etc/nginx/conf.d/jenkins.conf
 COPY conf/mycv.conf /etc/nginx/conf.d/mycv.conf
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 
-# Install Certbot
+# Install Certbot (HTTPS)
 RUN echo '#Debian Stretch, dépôt de rétroportages ("backports")\n\
 deb http://ftp.debian.org/debian stretch-backports main' >> /etc/apt/sources.list
 RUN cat /etc/apt/sources.list

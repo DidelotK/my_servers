@@ -10,6 +10,7 @@ services:
       - '50000:50000'
     restart: always
   nginx:
+    command: '/run.sh'
     build: nginx
     ports:
        - '80:80'
