@@ -1,0 +1,9 @@
+.idea
+.vagrant
+*.log
+.vault_password
+.credentials
+**/ssh-keys/*
+
+!**/.gitkeep
+
