@@ -1,10 +1,13 @@
 #!groovy
 import hudson.security.*
+import hudson.security.csrf.DefaultCrumbIssuer
 import jenkins.model.*
 import jenkins.security.s2m.AdminWhitelistRule
 
 def instance = Jenkins.getInstance()
+
 def hudsonRealm = new HudsonPrivateSecurityRealm(false)
+def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
 def users = hudsonRealm.getAllUsers()
 def admin_username = "admin"
 def admin_password = "admin"
@@ -12,17 +15,11 @@ def admin_password = "admin"
 instance.getDescriptor("jenkins.CLI").get().setEnabled(false)
 instance.getInjector().getInstance(AdminWhitelistRule.class)
 .setMasterKillSwitch(false)
+instance.setCrumbIssuer(new DefaultCrumbIssuer(true))
 
-users_s = users.collect { it.toString() }
-if (admin_username in users_s) {
-    println "Admin user already exists"
-} else {
-    println "--> creating local admin user"
+hudsonRealm.createAccount(admin_username, admin_password)
+instance.setSecurityRealm(hudsonRealm)
 
-    hudsonRealm.createAccount(admin_username, admin_password)
-    instance.setSecurityRealm(hudsonRealm)
+instance.setAuthorizationStrategy(strategy)
 
-    def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
-    instance.setAuthorizationStrategy(strategy)
-    instance.save()
-}
+instance.save()
