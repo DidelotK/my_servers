@@ -17,6 +17,7 @@ services:
        - '443:443'
     links:
        - jenkinsmaster:jenkins-master
+       - portainer:portainer
     volumes_from:
       - mycv
     restart: always
@@ -24,3 +25,8 @@ services:
     build: jenkins-node-slave
   mycv:
     image: didelotkev/my_cv
+  portainer:
+    image: portainer/portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
