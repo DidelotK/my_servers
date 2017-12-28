@@ -18,6 +18,7 @@ services:
     links:
        - jenkinsmaster:jenkins-master
        - portainer:portainer
+       - grafana:grafana
     volumes_from:
       - mycv
     restart: always
@@ -29,4 +30,7 @@ services:
     image: portainer/portainer
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+  grafana:
+    image: grafana/grafana
     restart: always

@@ -16,6 +16,7 @@ RUN apt-get install nginx -y
 COPY conf/jenkins.conf /etc/nginx/conf.d/jenkins.conf
 COPY conf/mycv.conf /etc/nginx/conf.d/mycv.conf
 COPY conf/portainer.conf /etc/nginx/conf.d/portainer.conf
+COPY conf/grafana.conf /etc/nginx/conf.d/grafana.conf
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 
 # Install Certbot (HTTPS)
