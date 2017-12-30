@@ -1,14 +1,32 @@
-version: '2'
+version: '3.2'
 services:
-  jenkinsdata:
-    build: jenkins-data
   jenkinsmaster:
     build: jenkins-master
-    volumes_from:
-      - jenkinsdata
+    volumes:
+      - jenkins_logs:/var/log/jenkins
+      - jenkins_data:/var/jenkins_home
     ports:
       - '50000:50000'
     restart: always
+  jenkinsnodeslave:
+    build: jenkins-node-slave
+  mycv:
+    image: didelotkev/my_cv
+    volumes:
+      - mycv:/var/www/mycv
+  portainer:
+    image: portainer/portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart: always
+  grafana:
+    image: grafana/grafana
+    restart: always
+    volumes:
+      - grafana_configs:/etc/grafana
+      - grafana_logs:/var/log/grafana
+      - grafana_data:/var/lib/grafana
   nginx:
     command: '/run.sh'
     build: nginx
@@ -19,18 +37,21 @@ services:
        - jenkinsmaster:jenkins-master
        - portainer:portainer
        - grafana:grafana
-    volumes_from:
-      - mycv
-    restart: always
-  jenkinsnodeslave:
-    build: jenkins-node-slave
-  mycv:
-    image: didelotkev/my_cv
-  portainer:
-    image: portainer/portainer
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - type: bind
+        source: mycv
+        target: /var/www/mycv
+    depends_on:
+      - jenkinsmaster
+      - mycv
+      - portainer
+      - grafana
     restart: always
-  grafana:
-    image: grafana/grafana
-    restart: always
+volumes:
+  jenkins_data:
+  jenkins_logs:
+  portainer_data:
+  grafana_configs:
+  grafana_logs:
+  grafana_data:
+  mycv:

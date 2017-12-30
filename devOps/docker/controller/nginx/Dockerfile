@@ -8,9 +8,11 @@ RUN useradd -u 1000 -s /bin/bash nginx
 RUN apt-get update
 RUN apt-get install nginx -y
 
-# Remove useless configurations
-#RUN rm /etc/nginx/conf.d/default.conf
-#RUN rm /etc/nginx/conf.d/example_ssl.conf
+# Install Certbot (HTTPS)
+RUN echo '#Debian Stretch, dépôt de rétroportages ("backports")\n\
+deb http://ftp.debian.org/debian stretch-backports main' >> /etc/apt/sources.list
+RUN apt-get update
+RUN apt-get install certbot -t stretch-backports -y
 
 # Add all necessary configurations
 COPY conf/jenkins.conf /etc/nginx/conf.d/jenkins.conf
@@ -18,13 +20,6 @@ COPY conf/mycv.conf /etc/nginx/conf.d/mycv.conf
 COPY conf/portainer.conf /etc/nginx/conf.d/portainer.conf
 COPY conf/grafana.conf /etc/nginx/conf.d/grafana.conf
 COPY conf/nginx.conf /etc/nginx/nginx.conf
-
-# Install Certbot (HTTPS)
-RUN echo '#Debian Stretch, dépôt de rétroportages ("backports")\n\
-deb http://ftp.debian.org/debian stretch-backports main' >> /etc/apt/sources.list
-RUN cat /etc/apt/sources.list
-RUN apt-get update
-RUN apt-get install python-certbot-nginx -t stretch-backports -y
 
 # Expose HTTP and HTTPS ports
 EXPOSE 80
