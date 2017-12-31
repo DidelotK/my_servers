@@ -13,7 +13,8 @@ services:
   mycv:
     image: didelotkev/my_cv
     volumes:
-      - mycv:/var/www/mycv
+      - mycv_data:/var/www/mycv
+      - mycv_logs:/var/log/nginx
   portainer:
     image: portainer/portainer
     volumes:
@@ -37,21 +38,25 @@ services:
        - jenkinsmaster:jenkins-master
        - portainer:portainer
        - grafana:grafana
-    volumes:
-      - type: bind
-        source: mycv
-        target: /var/www/mycv
+       - mycv:mycv
     depends_on:
       - jenkinsmaster
       - mycv
       - portainer
       - grafana
+    volumes:
+      - nginx_configs:/etc/nginx
+      - nginx_logs:/var/log/nginx
     restart: always
 volumes:
   jenkins_data:
   jenkins_logs:
+  mycv_data:
+  mycv_logs:
   portainer_data:
   grafana_configs:
   grafana_logs:
   grafana_data:
   mycv:
+  nginx_configs:
+  nginx_logs:
