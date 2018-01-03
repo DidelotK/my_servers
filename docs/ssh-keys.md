@@ -1,5 +1,5 @@
 # I/ Prerequisites
-## 4) Create needed ssh keys
+## 5) Create needed ssh keys
 
 In order to make the application run correctly we have to create the following keys:
 

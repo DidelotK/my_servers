@@ -1,5 +1,5 @@
 # I/ Prerequisites
-## 6) Install Ansible required roles
+## 7) Install Ansible required roles
 
 ```bash
 cd devOps/ansible

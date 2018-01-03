@@ -10,11 +10,12 @@
 <a name="prerequisites"></a>
 ## I/ Prerequisites
 - [1) Install Ansible](https://www.ansible.com/)
-- [2) Encrypt admin password](docs/encrypt-admin-password.md)
-- [3) Create vault variable](docs/ansible-vault.md)
-- [4) Create needed ssh keys](docs/ssh-keys.md)
-- [5) Update Ansible inventory](docs/update-ansible-inventory.md)
-- [6) Install Ansible required roles](docs/install-ansible-required-roles.md)
+- [2) Install ssh server on servers (if necessary)](docs/install-ssh.md)
+- [3) Encrypt admin password](docs/encrypt-admin-password.md)
+- [4) Create vault variable](docs/ansible-vault.md)
+- [5) Create needed ssh keys](docs/ssh-keys.md)
+- [6) Update Ansible inventory](docs/update-ansible-inventory.md)
+- [7) Install Ansible required roles](docs/install-ansible-required-roles.md)
 
 <a name="servers-pre-configurations"></a>
 ## II/ Servers pre-configurations

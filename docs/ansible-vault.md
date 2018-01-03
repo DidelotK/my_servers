@@ -1,5 +1,5 @@
 # I/ Prerequisites
-## 3) Create vault variable
+## 4) Create vault variable
 
 This project use ansible vault in order to encrypt sensible data.
 

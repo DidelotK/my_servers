@@ -1,5 +1,5 @@
 # I/ Prerequisites
-## 5) Update ansible inventory
+## 6) Update ansible inventory
 
 Ansible need to know the hosts to launch the configuration so add
 in the `ansible/inventory` file your hosts and the link to there ssh key like bellow:
