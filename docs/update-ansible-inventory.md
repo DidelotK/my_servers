@@ -4,15 +4,14 @@
 Ansible need to know the hosts to launch the configuration so add
 in the `ansible/inventory` file your hosts and the link to there ssh key like bellow:
 
-    webserver ansible_host=35.159.19.245 # your webserver ip (webapp)
-    controller ansible_host=35.159.19.246 # your controller ip (jenkins, grafana ...)
+    webserver ansible_host=your_webserver_ip # your webserver ip (webapp)
+    controller ansible_host=your_controller_ip # your controller ip (jenkins, grafana ...)
     
     [controllers]
     controller
 
     [ec2]
     webserver
-    controller
     
     [ec2:vars]
     ansible_ssh_private_key_file=./servers.pem

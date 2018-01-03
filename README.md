@@ -1,5 +1,10 @@
 # My servers configurations
 
+<p align="center">
+  <img src="docs/img/controller.png"
+  alt="Controller services"/>
+</p>
+
 ## Summary
 - [I/ Prerequisites](#prerequisites)
 - [II/ Servers pre-configurations](#servers-pre-configurations)
@@ -43,3 +48,7 @@
 All the servers use docker for virtualization, this makes possible to subsequently migrate more easily to other solutions.
 
 Follow this [link](docs/setup-jenkins.md) for more information about deployed containers
+
+## VI/ Future evolutions
+- Servers will all use docker swarm
+

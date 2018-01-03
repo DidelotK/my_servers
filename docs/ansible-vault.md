@@ -13,8 +13,10 @@ The file should only contain one password
 
 Here is the list of variables to encrypt in the project
 
-    dds_passphrase:
-        Location: devOps/ansible/group-vars/controller.yml
-        Aim: The passphrase used to create docker TLS certificates
+
+    `dds_passphrase`
+
+- Location: devOps/ansible/group-vars/controller.yml
+- Aim: The passphrase used to create docker TLS certificates
 
 <b>Next:</b> [Create needed ssh keys](ssh-keys.md)
