@@ -41,7 +41,6 @@
  
 <b> Notes:</b>
 - Your computer needs to have at least 12Go ram
-- To install the vagrant plugin you can simply run this command:
 
 <a name="more-info"></a>
 ## V/ More Information about the configurations
