@@ -62,7 +62,7 @@
         force: yes
       tags: controllers_services
 
-    - name: Copy certificates to the folders of docker images that will use tcp to connect to host daemon.
+    - name: Copy certificates into folders of docker images that will use tcp to connect to host daemon.
       copy:
         src: "{{ docker_tls_certs_path }}/{{ item.1 }}"
         dest: "{{ item.0 }}/certs/{{ item.1 }}"
