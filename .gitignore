@@ -1,9 +1,18 @@
+# IDE
 .idea
+
+# Test
 .vagrant
 *.log
+
+# Credentials
 .vault_password
 .credentials
-**/ssh-keys/*
+ssh-keys/*
+
+# Ansible
+**/roles/*
+*.retry
+*.pem
 
 !**/.gitkeep
-
