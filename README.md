@@ -50,5 +50,4 @@ All the servers use docker for virtualization, this makes possible to subsequent
 Follow this [link](docs/setup-jenkins.md) for more information about deployed containers
 
 ## VI/ Future evolutions
-- Servers will all use docker swarm
-
+- [TODOS](TODO.md)
