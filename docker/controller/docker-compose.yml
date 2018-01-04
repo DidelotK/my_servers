@@ -46,6 +46,7 @@ services:
       - grafana
     volumes:
       - nginx_logs:/var/log/nginx
+      - nginx_certificates:/etc/letsencrypt
     restart: always
 volumes:
   jenkins_data:
@@ -58,3 +59,4 @@ volumes:
   grafana_data:
   mycv:
   nginx_logs:
+  nginx_certificates:

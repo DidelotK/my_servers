@@ -19,6 +19,7 @@ COPY conf/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
 EXPOSE 443
 
+VOLUME /etc/letsencrypt
 VOLUME /var/log/nginx
 
 COPY ./scripts/run.sh /run.sh
