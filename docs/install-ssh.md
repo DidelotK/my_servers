@@ -27,6 +27,4 @@ Open `/etc/hosts.deny` and ajust the following line to deny all other connexion
 ## Bibliography
 http://www.octetmalin.net/linux/tutoriels/ssh-fichier-etc-sshd_config-configuration-machine-serveur.php
 
-TODO ANSIBLE PLAYBOOK
-
 <b>Next:</b> [Create vault variable](encrypt-admin-password.md)
