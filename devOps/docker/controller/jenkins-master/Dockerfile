@@ -1,5 +1,4 @@
 FROM jenkins/jenkins:lts
-
 MAINTAINER Kevin
 
 # Needed to init jenkins admin user
