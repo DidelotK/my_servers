@@ -11,6 +11,7 @@
 - [III/ Servers configurations](#servers-configurations)
 - [IV/ Tests with vagrant](#tests)
 - [V/ More Information about the configurations](#more-info)
+- [VI/ Future evolutions](#todos)
 
 <a name="prerequisites"></a>
 ## I/ Prerequisites
@@ -33,7 +34,7 @@
 <a name="tests"></a>
 ## IV/ Tests with vagrant
 - [1) Install Virtualbox](https://www.virtualbox.org/)
-- [2) Install Vagrant](https://www.vagrantup.com/) (with vagrant-reload plugin)
+- [2) Install Vagrant](https://www.vagrantup.com/)
 - [3) Install Ansible](https://www.ansible.com/)
 - [4) Configure DNS](docs/dns-configuration.md)
 - [5) Launch vm test](docs/launch-vm.md)
@@ -49,5 +50,6 @@ All the servers use docker for virtualization, this makes possible to subsequent
 
 Follow this [link](docs/setup-jenkins.md) for more information about deployed containers
 
+<a name="todos"></a>
 ## VI/ Future evolutions
 - [TODOS](TODO.md)
