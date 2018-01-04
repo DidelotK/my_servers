@@ -2,7 +2,7 @@
 ## 7) Install Ansible required roles
 
 ```bash
-cd devOps/ansible
+cd ansible
 ansible-galaxy install -p ./roles -r requirements.yml
 ```
 

@@ -3,7 +3,7 @@
 This playbook will setup the admin and add the ssh key to make controllers deploy in webapp created before
 
 ```bash
-cd devOps/ansible
+cd ansible
 ansible-playbook -i inventory --ask-sudo-pass --ask-vault-pass site.init.yml
 ```
 
@@ -25,7 +25,7 @@ This playbook will configure the following in the webapp:
     - Launch the main docker compose (nginx, jenkins, jenkins data, jenkins slave)
 
 ```bash
-cd devOps/ansible
+cd ansible
 ansible-playbook -i inventory --ask-sudo-pass --ask-vault-pass site.configuration.yml
 ```
 

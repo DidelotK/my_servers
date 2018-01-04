@@ -9,6 +9,6 @@ Here is the command to encrypt your password correctly (replace `salt` and `pass
 openssl passwd -salt 'salt' -1 'password'
 ```
 
-Then replace `admin_user_password` in `devOps/ansible/group_vars/all.yml` by the result of the above command.
+Then replace `admin_user_password` in `ansible/group_vars/all.yml` by the result of the above command.
 
 <b>Next:</b> [Create vault variable](ansible-vault.md)
