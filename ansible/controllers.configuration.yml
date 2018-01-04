@@ -60,7 +60,7 @@
         group: "{{ admin_user }}"
         mode: 0644
         force: yes
-      tags: jenkins_service
+      tags: controllers_services
 
     - name: Copy certificates to the folders of docker images that will use tcp to connect to host daemon.
       copy:
@@ -73,11 +73,12 @@
       with_nested:
         - "{{ docker_list_to_add_certs }}"
         - "{{ certs_list }}"
-      tags: jenkins_service
+      tags: controllers_services
 
     - name: Start controller docker compose (nginx, jenkins).
       docker_service:
         project_src: "/home/{{ admin_user }}/docker/controller"
         project_name: controller
         build: yes
-      tags: jenkins_service
+        pull: yes
+      tags: controllers_services
