@@ -45,7 +45,6 @@ services:
       - portainer
       - grafana
     volumes:
-      - nginx_configs:/etc/nginx
       - nginx_logs:/var/log/nginx
     restart: always
 volumes:
@@ -58,5 +57,4 @@ volumes:
   grafana_logs:
   grafana_data:
   mycv:
-  nginx_configs:
   nginx_logs:

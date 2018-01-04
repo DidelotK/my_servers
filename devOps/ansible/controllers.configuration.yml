@@ -34,7 +34,6 @@
       dds_locality: "Paris"
       dds_organization: "DidelotCorp"
       dds_client_cert_path: "{{ docker_tls_certs_path }}"
-      tags: controllers_services
 
     - role: docker
       docker_users:
@@ -81,4 +80,5 @@
         project_src: "/home/{{ admin_user }}/docker/controller"
         project_name: controller
         build: yes
+        pull: yes
       tags: controllers_services
