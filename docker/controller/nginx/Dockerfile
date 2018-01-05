@@ -5,7 +5,7 @@ MAINTAINER Kevin <work@didelotkev.ovh>
 RUN echo '#Debian Stretch, dépôt de rétroportages ("backports")\n\
 deb http://ftp.debian.org/debian stretch-backports main' >> /etc/apt/sources.list
 RUN apt-get update && apt-get install -y \
-    certbot -t stretch-backports \
+    python-certbot-nginx -t stretch-backports \
     && rm -rf /var/lib/apt/lists/*
 
 # Add all necessary configurations
