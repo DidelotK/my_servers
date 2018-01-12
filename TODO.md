@@ -2,5 +2,6 @@
 
 - Install ssh server via ansible local playbook
 - Test everything (vagrant in particular)
-- Switch to docker swarm
+- Make LDAP auth for all apps
+- Switch to docker swarm/kubernetes
 - Improve/correct documentation
