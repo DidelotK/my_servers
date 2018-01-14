@@ -13,7 +13,6 @@ services:
   mycv:
     image: didelotkev/my_cv
     volumes:
-      - mycv_data:/var/www/mycv
       - mycv_logs:/var/log/nginx
   portainer:
     image: portainer/portainer
@@ -51,7 +50,6 @@ services:
 volumes:
   jenkins_data:
   jenkins_logs:
-  mycv_data:
   mycv_logs:
   portainer_data:
   grafana_configs:
