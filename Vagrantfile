@@ -7,7 +7,6 @@ VAGRANT_COMMAND = ARGV[0]
 VAGRANT_VERSION = '2'
 
 # Network configs
-WEBAPP_IP = '192.168.50.50'
 CONTROLLER_IP = '192.168.50.51'
 
 # User configs
@@ -24,15 +23,11 @@ $ansible_host_vars = {
     controller: {
         ansible_host: CONTROLLER_IP,
         ansible_port: '22'
-    },
-    webapp: {
-        ansible_host: WEBAPP_IP,
-        ansible_port: '22'
     }
 }
 $ansible_groups = {
     controllers: %w(controller),
-    all: %w(webapp controllers)
+    all: %w(controllers)
 }
 
 Vagrant.configure(VAGRANT_VERSION) do |config|
@@ -42,15 +37,6 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
     config.ssh.username = ADMIN_USER
     config.ssh.private_key_path = ADMIN_PATH_SSH_KEY_PRIVATE
     config.ssh.forward_agent = true
-  end
-
-  # Define webapp machine
-  config.vm.define 'webapp' do |webapp|
-    $ansible_extra_vars['default_user'] = 'ubuntu'
-
-    webapp.vm.box = 'geerlingguy/ubuntu1604'
-    webapp.vm.hostname = 'webapp'
-    webapp.vm.network 'private_network', ip: WEBAPP_IP, :bridge => '127.0.0.1'
   end
 
   # Define controller machine

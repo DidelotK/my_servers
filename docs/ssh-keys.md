@@ -13,17 +13,6 @@ ssh-keygen -f ./ssh-keys/admin_id_rsa -b 4096 -t rsa
     ssh-keys/admin_id_rsa
     ssh-keys/admin_id_rsa.pub
 ```
- 
-## SSH key to make controllers deploy in webapp with ansible
-
-```bash
-ssh-keygen -f ./ssh-keys/webapp_id_rsa -t rsa -b 4096
-# It will ask you a passphrase for the ssh key (don't let it empty for more safety)
-
-# Expected result:
-    ssh-keys/webapp_id_rsa
-    ssh-keys/webapp_id_rsa.pub
-```
     
 ## SSH key to make jenkins master build in jenkins slave 
 

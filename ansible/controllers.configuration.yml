@@ -4,7 +4,7 @@
 # Deploy:
 #   - Jenkins
 #   - Grafana
-#   - Gitlab
+#   - Portainer
 #
 
 - hosts: controllers
@@ -12,8 +12,8 @@
   become: yes
   vars:
     docker_tls_certs_path: "/etc/ssl/certs/docker"
-    jenkins_master_docker_path: "/home/{{ admin_user }}/docker/controller/jenkins-master"
-    jenkins_node_slave_docker_path: "/home/{{ admin_user }}/docker/controller/jenkins-node-slave"
+    jenkins_master_docker_path: "/home/{{ admin_user }}/docker/controllers/jenkins-master"
+    jenkins_node_slave_docker_path: "/home/{{ admin_user }}/docker/controllers/jenkins-node-slave"
     docker0_master_ip: 172.17.0.1
     docker_list_to_add_certs:
       - "{{ jenkins_master_docker_path }}"
@@ -77,6 +77,6 @@
 
     - name: Start controller docker compose (nginx, jenkins, grafana, mycv, portainer).
       make:
-        chdir: "/home/{{ admin_user }}/docker/controller"
+        chdir: "/home/{{ admin_user }}/docker/controllers"
         target: run
       tags: controllers_services

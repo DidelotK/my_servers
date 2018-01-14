@@ -34,25 +34,3 @@
         user: "{{ admin_user }}"
         state: present
         key: "{{ lookup('file', path_to_ssh_admin_public_keys) }}"
-
-- hosts: controllers
-  remote_user: "{{ admin_user }}"
-  become: yes
-  tasks:
-    - name: Copy ssh access files to webapp.
-      copy:
-        src: "{{ path_to_ssh_webapp_private_keys }}"
-        dest: "/home/{{ admin_user }}/.ssh/webapp_id_rsa"
-        owner: "{{ admin_user }}"
-        group: "{{ admin_user }}"
-        mode: 0400
-
-- hosts: webapp
-  remote_user: "{{ admin_user }}"
-  become: yes 
-  tasks:
-    - name: Add authorized key for controllers.
-      authorized_key:
-        user: "{{ admin_user }}"
-        state: present
-        key: "{{ lookup('file', path_to_ssh_webapp_public_keys) }}"

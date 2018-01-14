@@ -4,8 +4,5 @@
 # This playbook configure all the servers
 #
 
-# Init controllers
+# Init docker controllers
 - import_playbook: controllers.configuration.yml
-
-# Init sites
-# - import_playbook: webserver.configuration.yml
