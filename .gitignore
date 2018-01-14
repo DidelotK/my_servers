@@ -14,5 +14,6 @@ ssh-keys/*
 **/roles/*
 *.retry
 *.pem
+ansible/Makefile
 
 !**/.gitkeep
