@@ -75,10 +75,8 @@
         - "{{ certs_list }}"
       tags: controllers_services
 
-    - name: Start controller docker compose (nginx, jenkins).
-      docker_service:
-        project_src: "/home/{{ admin_user }}/docker/controller"
-        project_name: controller
-        build: yes
-        pull: yes
+    - name: Start controller docker compose (nginx, jenkins, grafana, mycv, portainer).
+      make:
+        chdir: "/home/{{ admin_user }}/docker/controller"
+        target: run
       tags: controllers_services
