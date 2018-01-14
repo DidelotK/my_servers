@@ -14,6 +14,7 @@ services:
     image: didelotkev/my_cv
     volumes:
       - mycv_logs:/var/log/nginx
+    restart: always
   portainer:
     image: portainer/portainer
     volumes:
@@ -22,13 +23,12 @@ services:
     restart: always
   grafana:
     image: grafana/grafana
-    restart: always
     volumes:
       - grafana_configs:/etc/grafana
       - grafana_logs:/var/log/grafana
       - grafana_data:/var/lib/grafana
+    restart: always
   nginx:
-    command: '/run.sh'
     build: nginx
     ports:
        - '80:80'
