@@ -8,6 +8,7 @@ VAGRANT_VERSION = '2'
 
 # Network configs
 MANAGER1_IP = '192.168.50.51'
+WORKER1_IP = '192.168.50.52'
 
 # User configs
 ADMIN_USER = 'admin'
@@ -23,11 +24,17 @@ $ansible_host_vars = {
     manager1: {
         ansible_host: MANAGER1_IP,
         ansible_port: '22'
+    },
+    worker1: {
+        ansible_host: WORKER1_IP,
+        ansible_port: '22'
     }
 }
 $ansible_groups = {
     managers: %w(manager1),
-    all: %w(managers)
+    workers: %w(worker1),
+    swarm_nodes: %w(managers workers),
+    all: %w(swarm_nodes)
 }
 
 Vagrant.configure(VAGRANT_VERSION) do |config|
@@ -53,6 +60,20 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
     manager.vm.network 'private_network', ip: MANAGER1_IP, :bridge => '127.0.0.1'
   end
 
+  # Define worker1 machine
+  config.vm.define 'worker1' do |manager|
+    $ansible_extra_vars['default_user'] = 'ubuntu'
+
+    manager.vm.provider 'virtualbox' do |v|
+      v.memory = 2048
+      v.cpus = 2
+    end
+
+    manager.vm.box = 'geerlingguy/ubuntu1604'
+    manager.vm.hostname = 'worker1'
+    manager.vm.network 'private_network', ip: WORKER1_IP, :bridge => '127.0.0.1'
+  end
+
   # Initialize the machines with a new admin user
   config.vm.provision 'init', type: 'ansible_local' do |ansible_init|
     ansible_init.extra_vars = $ansible_extra_vars
@@ -71,4 +92,3 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
   end
 
 end
-
