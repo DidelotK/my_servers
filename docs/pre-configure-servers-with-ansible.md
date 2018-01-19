@@ -1,4 +1,4 @@
-## Launch servers initialization (swarm nodes)
+## Pre-configure servers with Ansible
 
 This playbook will setup the admin and add the ssh key to make managers deploy in webapp created before
 
@@ -21,6 +21,3 @@ This playbook will configure the following in the manager:
 cd ansible
 ansible-playbook -i inventory --ask-sudo-pass --ask-vault-pass site.configuration.yml
 ```
-
-
-<b>Next:</b> [Servers configurations](../README.md#servers-configurations)

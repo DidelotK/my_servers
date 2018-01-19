@@ -1,5 +1,4 @@
-# I/ Prerequisites
-## 5) Create needed ssh keys
+## Create needed ssh keys
 
 In order to make the application run correctly we have to create the following keys:
 
@@ -24,5 +23,3 @@ mv id_rsa.pub authorized_keys
     docker/jenkins-node-slave/ssh-keys/id_rsa
     docker/jenkins-node-slave/ssh-keys/authorized_keys
 ```
-
-<b>Next:</b> [Update Ansible inventory](update-ansible-inventory.md)

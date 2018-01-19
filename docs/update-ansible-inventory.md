@@ -1,5 +1,4 @@
-# I/ Prerequisites
-## 6) Update ansible inventory
+## Update ansible inventory
 
 Ansible need to know the hosts to launch the configuration so add
 in the `ansible/inventory` file your hosts and the link to there ssh key like bellow:
@@ -14,5 +13,3 @@ in the `ansible/inventory` file your hosts and the link to there ssh key like be
     
     [all]
     swarm_nodes
-    
-<b>Next:</b> [Install Ansible required roles](install-ansible-required-roles.md)

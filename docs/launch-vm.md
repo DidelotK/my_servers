@@ -1,8 +1,4 @@
-# Run and configure servers
-
-Before testing you need to install the ansible required role:
-
-- [Install Ansible required roles](install-ansible-required-roles.md)
+# Launch test VM
 
 Run this command to create the machines vms and launch provisioning.
 ```bash

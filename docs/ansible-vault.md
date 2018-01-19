@@ -1,5 +1,4 @@
-# I/ Prerequisites
-## 4) Create vault variable
+## Create vault variable
 
 This project use ansible vault in order to encrypt sensible data.
 
@@ -18,5 +17,3 @@ Here is the list of variables to encrypt in the project
 
 - Location: ansible/group-vars/manager.yml
 - Aim: The passphrase used to create docker TLS certificates
-
-<b>Next:</b> [Create needed ssh keys](ssh-keys.md)
