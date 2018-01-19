@@ -16,6 +16,7 @@ services:
       - mycv_logs:/var/log/nginx
     restart: always
   portainer:
+    privileged: true
     image: portainer/portainer
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

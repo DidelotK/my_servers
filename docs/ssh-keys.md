@@ -3,7 +3,7 @@
 
 In order to make the application run correctly we have to create the following keys:
 
-## SSH key to connect in servers (webapp, controllers)
+## SSH key to connect in servers (webapp, managers)
 
 ```bash
 ssh-keygen -f ./ssh-keys/admin_id_rsa -b 4096 -t rsa

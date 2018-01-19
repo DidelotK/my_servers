@@ -1,5 +1,5 @@
 ---
-########## CONTROLLER PLAYBOOK ##########
+########## DOCKER NODES PLAYBOOK ##########
 #
 # Deploy:
 #   - Jenkins
@@ -7,14 +7,13 @@
 #   - Portainer
 #
 
-- hosts: controllers
+- hosts: managers
   remote_user: "{{ admin_user }}"
   become: yes
   vars:
     docker_tls_certs_path: "/etc/ssl/certs/docker"
-    jenkins_master_docker_path: "/home/{{ admin_user }}/docker/controllers/jenkins-master"
-    jenkins_node_slave_docker_path: "/home/{{ admin_user }}/docker/controllers/jenkins-node-slave"
-    docker0_master_ip: 172.17.0.1
+    jenkins_master_docker_path: "/home/{{ admin_user }}/docker/managers/jenkins-master"
+    jenkins_node_slave_docker_path: "/home/{{ admin_user }}/docker/managers/jenkins-node-slave"
     docker_list_to_add_certs:
       - "{{ jenkins_master_docker_path }}"
       - "{{ jenkins_node_slave_docker_path }}"
@@ -22,8 +21,6 @@
       - ca.pem
       - cert.pem
       - key.pem
-    pip_install_packages:
-      - name: docker-py
   roles:
     - role: pip
 
@@ -41,7 +38,7 @@
       docker_daemon_options:
         hosts:
           - "unix:///var/run/docker.sock"
-          - "tcp://{{ docker0_master_ip }}:2376"
+          - "tcp://{{ ansible_host }}:2376"
         tlsverify: true
         tlscacert: "{{ dds_server_cert_path }}/ca.pem"
         tlscert: "{{ dds_server_cert_path }}/server-cert.pem"
@@ -60,7 +57,7 @@
         group: "{{ admin_user }}"
         mode: 0644
         force: yes
-      tags: controllers_services
+      tags: docker_services
 
     - name: Copy certificates into folders of docker images that will use tcp to connect to host daemon.
       copy:
@@ -73,10 +70,10 @@
       with_nested:
         - "{{ docker_list_to_add_certs }}"
         - "{{ certs_list }}"
-      tags: controllers_services
+      tags: docker_services
 
-    - name: Start controller docker compose (nginx, jenkins, grafana, mycv, portainer).
+    - name: Start manager docker compose (nginx, jenkins, grafana, mycv, portainer).
       make:
-        chdir: "/home/{{ admin_user }}/docker/controllers"
+        chdir: "/home/{{ admin_user }}/docker/managers"
         target: run
-      tags: controllers_services
+      tags: docker_services

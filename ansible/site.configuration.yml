@@ -4,5 +4,5 @@
 # This playbook configure all the servers
 #
 
-# Init docker controllers
-- import_playbook: controllers.configuration.yml
+# Init swarm docker nodes
+- import_playbook: docker.nodes.configuration.yml

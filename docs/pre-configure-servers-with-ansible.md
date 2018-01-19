@@ -1,15 +1,15 @@
-## Launch servers initialization (controller + webserver)
+## Launch servers initialization (manager + webserver)
 
-This playbook will setup the admin and add the ssh key to make controllers deploy in webapp created before
+This playbook will setup the admin and add the ssh key to make managers deploy in webapp created before
 
 ```bash
 cd ansible
 ansible-playbook -i inventory --ask-sudo-pass --ask-vault-pass site.init.yml
 ```
 
-## Launch servers configuration (controller + webserver)
+## Launch servers configuration (manager + webserver)
 
-This playbook will configure the following in the controller:
+This playbook will configure the following in the manager:
         
     - Install pip
     - Install docker

@@ -7,7 +7,7 @@ VAGRANT_COMMAND = ARGV[0]
 VAGRANT_VERSION = '2'
 
 # Network configs
-CONTROLLER_IP = '192.168.50.51'
+MANAGER1_IP = '192.168.50.51'
 
 # User configs
 ADMIN_USER = 'admin'
@@ -20,14 +20,14 @@ $ansible_extra_vars = {
     admin_user: ADMIN_USER
 }
 $ansible_host_vars = {
-    controller: {
-        ansible_host: CONTROLLER_IP,
+    manager1: {
+        ansible_host: MANAGER1_IP,
         ansible_port: '22'
     }
 }
 $ansible_groups = {
-    controllers: %w(controller),
-    all: %w(controllers)
+    managers: %w(manager1),
+    all: %w(managers)
 }
 
 Vagrant.configure(VAGRANT_VERSION) do |config|
@@ -39,18 +39,18 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
     config.ssh.forward_agent = true
   end
 
-  # Define controller machine
-  config.vm.define 'controller' do |controller|
+  # Define manager1 machine
+  config.vm.define 'manager1' do |manager|
     $ansible_extra_vars['default_user'] = 'ubuntu'
 
-    controller.vm.provider 'virtualbox' do |v|
-      v.memory = 2048
+    manager.vm.provider 'virtualbox' do |v|
+      v.memory = 4096
       v.cpus = 2
     end
 
-    controller.vm.box = 'geerlingguy/ubuntu1604'
-    controller.vm.hostname = 'controller'
-    controller.vm.network 'private_network', ip: CONTROLLER_IP, :bridge => '127.0.0.1'
+    manager.vm.box = 'geerlingguy/ubuntu1604'
+    manager.vm.hostname = 'manager1'
+    manager.vm.network 'private_network', ip: MANAGER1_IP, :bridge => '127.0.0.1'
   end
 
   # Initialize the machines with a new admin user

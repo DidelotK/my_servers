@@ -1,8 +1,8 @@
 # My servers configurations
 
 <p align="center">
-  <img src="docs/img/controller.png"
-  alt="Controller services"/>
+  <img src="docs/img/manager.png"
+  alt="Docker services"/>
 </p>
 
 ## Summary
