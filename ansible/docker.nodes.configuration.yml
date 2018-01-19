@@ -7,20 +7,9 @@
 #   - Portainer
 #
 
-- hosts: managers
+- hosts: swarm_nodes
   remote_user: "{{ admin_user }}"
   become: yes
-  vars:
-    docker_tls_certs_path: "/etc/ssl/certs/docker"
-    jenkins_master_docker_path: "/home/{{ admin_user }}/docker/managers/jenkins-master"
-    jenkins_node_slave_docker_path: "/home/{{ admin_user }}/docker/managers/jenkins-node-slave"
-    docker_list_to_add_certs:
-      - "{{ jenkins_master_docker_path }}"
-      - "{{ jenkins_node_slave_docker_path }}"
-    certs_list:
-      - ca.pem
-      - cert.pem
-      - key.pem
   roles:
     - role: pip
 
@@ -49,6 +38,20 @@
         name: docker-compose
         state: present
 
+- hosts: manager1
+  remote_user: "{{ admin_user }}"
+  become: yes
+  vars:
+    jenkins_master_docker_path: "/home/{{ admin_user }}/docker/managers/jenkins-master"
+    jenkins_node_slave_docker_path: "/home/{{ admin_user }}/docker/managers/jenkins-node-slave"
+    docker_list_to_add_certs:
+      - "{{ jenkins_master_docker_path }}"
+      - "{{ jenkins_node_slave_docker_path }}"
+    certs_list:
+      - ca.pem
+      - cert.pem
+      - key.pem
+  tasks:
     - name: Copy docker to remote.
       copy:
         src: ../docker
