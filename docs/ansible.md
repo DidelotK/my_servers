@@ -9,8 +9,14 @@ in the `ansible/inventory` file your hosts and the link to there ssh key like be
 
     manager1 ansible_host=35.159.19.246
     
-    [all]
+    [managers]
     manager1
+    
+    [swarm_nodes]
+    managers
+    
+    [all]
+    swarm_nodes
 
 ## Install ansible role requirements
 ```bash

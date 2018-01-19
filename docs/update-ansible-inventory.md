@@ -9,7 +9,10 @@ in the `ansible/inventory` file your hosts and the link to there ssh key like be
     [managers]
     manager1
 
+    [swarm_nodes]
+    managers
+    
     [all]
-    manager
+    swarm_nodes
     
 <b>Next:</b> [Install Ansible required roles](install-ansible-required-roles.md)
