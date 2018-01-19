@@ -54,7 +54,7 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
   end
 
   # Initialize the machines with a new admin user
-  config.vm.provision 'init', type: 'ansible' do |ansible_init|
+  config.vm.provision 'init', type: 'ansible_local' do |ansible_init|
     ansible_init.extra_vars = $ansible_extra_vars
     ansible_init.host_vars = $ansible_host_vars
     ansible_init.groups = $ansible_groups
@@ -62,7 +62,7 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
   end
 
   # Configure the machines depending on theirs roles
-  config.vm.provision 'configuration', type: 'ansible' do |ansible_configuration|
+  config.vm.provision 'configuration', type: 'ansible_local' do |ansible_configuration|
     ansible_configuration.vault_password_file = 'ansible/.vault_password'
     ansible_configuration.extra_vars = $ansible_extra_vars
     ansible_configuration.host_vars = $ansible_host_vars
