@@ -10,6 +10,12 @@ VAGRANT_VERSION = '2'
 MANAGER1_IP = '192.168.50.51'
 WORKER1_IP = '192.168.50.52'
 
+# Machines configs
+MANAGER1_RAM = 4096
+MANAGER1_CPU = 2
+WORKER1_RAM = 4096
+WORKER1_CPU = 2
+
 # User configs
 ADMIN_USER = 'admin'
 ADMIN_PATH_SSH_KEY_PUBLIC = 'ssh-keys/admin_id_rsa.pub'
@@ -38,6 +44,8 @@ $ansible_groups = {
 }
 
 Vagrant.configure(VAGRANT_VERSION) do |config|
+  # All the vm will run under the geerlingguy's ubuntu box (virtualbox, vmware supported)
+  config.vm.box = 'geerlingguy/ubuntu1604'
 
   # Connect ssh with admin user
   if VAGRANT_COMMAND == 'ssh'
@@ -47,31 +55,37 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
   end
 
   # Define manager1 machine
-  config.vm.define 'manager1' do |manager|
+  config.vm.define 'manager1' do |manager1|
+    manager1.vm.hostname = 'manager1'
+    manager1.vm.network 'private_network', ip: MANAGER1_IP, :bridge => '127.0.0.1'
     $ansible_extra_vars['default_user'] = 'ubuntu'
 
-    manager.vm.provider 'virtualbox' do |v|
-      v.memory = 4096
-      v.cpus = 2
+    manager1.vm.provider 'virtualbox' do |v|
+      v.memory = MANAGER1_RAM
+      v.cpus = MANAGER1_CPU
     end
 
-    manager.vm.box = 'geerlingguy/ubuntu1604'
-    manager.vm.hostname = 'manager1'
-    manager.vm.network 'private_network', ip: MANAGER1_IP, :bridge => '127.0.0.1'
+    manager1.vm.provider 'vmware_fusion' do |v|
+      v.vmx['memsize'] = MANAGER1_RAM
+      v.vmx['numvcpus'] = MANAGER1_CPU
+    end
   end
 
   # Define worker1 machine
-  config.vm.define 'worker1' do |manager|
+  config.vm.define 'worker1' do |worker1|
     $ansible_extra_vars['default_user'] = 'ubuntu'
+    worker1.vm.hostname = 'worker1'
+    worker1.vm.network 'private_network', ip: WORKER1_IP, :bridge => '127.0.0.1'
 
-    manager.vm.provider 'virtualbox' do |v|
-      v.memory = 2048
-      v.cpus = 2
+    worker1.vm.provider 'virtualbox' do |v|
+      v.memory = WORKER1_RAM
+      v.cpus = WORKER1_CPU
     end
 
-    manager.vm.box = 'geerlingguy/ubuntu1604'
-    manager.vm.hostname = 'worker1'
-    manager.vm.network 'private_network', ip: WORKER1_IP, :bridge => '127.0.0.1'
+    worker1.vm.provider 'vmware_fusion' do |v|
+      v.vmx['memsize'] = WORKER1_RAM
+      v.vmx['numvcpus'] = WORKER1_CPU
+    end
   end
 
   # Initialize the machines with a new admin user
