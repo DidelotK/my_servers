@@ -74,9 +74,3 @@
         - "{{ docker_list_to_add_certs }}"
         - "{{ certs_list }}"
       tags: docker_services
-
-    - name: Start manager docker compose (nginx, jenkins, grafana, mycv, portainer).
-      make:
-        chdir: "/home/{{ admin_user }}/docker/managers"
-        target: run
-      tags: docker_services

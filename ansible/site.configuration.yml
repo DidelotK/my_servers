@@ -1,8 +1,0 @@
----
-########## CONFIGURATION PLAYBOOK ##########
-#
-# This playbook configure all the servers
-#
-
-# Init swarm docker nodes
-- import_playbook: docker.nodes.configuration.yml

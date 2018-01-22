@@ -22,6 +22,7 @@ ADMIN_PATH_SSH_KEY_PUBLIC = 'ssh-keys/admin_id_rsa.pub'
 ADMIN_PATH_SSH_KEY_PRIVATE = 'ssh-keys/admin_id_rsa'
 
 # Ansible configs
+ANSIBLE_COMPATIBILITY_MODE = '2.0'
 $ansible_extra_vars = {
     default_user: '',
     admin_user: ADMIN_USER
@@ -39,7 +40,7 @@ $ansible_host_vars = {
 $ansible_groups = {
     managers: %w(manager1),
     workers: %w(worker1),
-    swarm_nodes: %w(managers workers),
+    swarm_nodes: %w(manager1 worker1),
     all: %w(swarm_nodes)
 }
 
@@ -89,20 +90,32 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
   end
 
   # Initialize the machines with a new admin user
-  config.vm.provision 'init', type: 'ansible_local' do |ansible_init|
+  config.vm.provision 'init', type: 'ansible' do |ansible_init|
+    ansible_init.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
     ansible_init.extra_vars = $ansible_extra_vars
     ansible_init.host_vars = $ansible_host_vars
     ansible_init.groups = $ansible_groups
     ansible_init.playbook = 'ansible/site.init.yml'
   end
 
-  # Configure the machines depending on theirs roles
-  config.vm.provision 'configuration', type: 'ansible_local' do |ansible_configuration|
+  # Configure the docker nodes
+  config.vm.provision 'configuration', type: 'ansible' do |ansible_configuration|
+    ansible_configuration.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
     ansible_configuration.vault_password_file = 'ansible/.vault_password'
     ansible_configuration.extra_vars = $ansible_extra_vars
     ansible_configuration.host_vars = $ansible_host_vars
     ansible_configuration.groups = $ansible_groups
-    ansible_configuration.playbook = 'ansible/site.configuration.yml'
+    ansible_configuration.tags = 'docker_services'
+    ansible_configuration.playbook = 'ansible/docker.nodes.configuration.yml'
+  end
+
+  # Launch services on docker swarm cluster
+  config.vm.provision 'launch_services', type: 'ansible' do |ansible_launch_services|
+    ansible_launch_services.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
+    ansible_launch_services.extra_vars = $ansible_extra_vars
+    ansible_launch_services.host_vars = $ansible_host_vars
+    ansible_launch_services.groups = $ansible_groups
+    ansible_launch_services.playbook = 'ansible/docker.swarm.services.yml'
   end
 
 end
