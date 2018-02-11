@@ -1,11 +1,5 @@
 ---
-########## DOCKER NODES PLAYBOOK ##########
-#
-# Deploy:
-#   - Jenkins
-#   - Grafana
-#   - Portainer
-#
+########## DOCKER NODES CONFIGURATION ##########
 
 - hosts: swarm_nodes
   remote_user: "{{ admin_user }}"

@@ -1,5 +1,4 @@
 default_user: ubuntu
-admin_user_password: $1$5646544d$uGuJN00SLyqq/IwvBNLjh.
 path_to_ssh_keys: ../ssh-keys
 path_to_ssh_admin_public_keys: "{{ path_to_ssh_keys }}/admin_id_rsa.pub"
 path_to_ssh_webapp_public_keys: "{{ path_to_ssh_keys }}/webapp_id_rsa.pub"

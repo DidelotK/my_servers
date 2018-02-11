@@ -1,3 +1,5 @@
+---
+########## DOCKER SWARM SERVICES ##########
 
 - hosts: manager1
   remote_user: "{{ admin_user }}"
