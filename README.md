@@ -1,7 +1,7 @@
 # My servers configurations
 
 <p align="center">
-  <img src="docs/img/manager.png"
+  <img src="docs/img/services.png"
   alt="Docker services"/>
 </p>
 
@@ -16,12 +16,13 @@
 - [1) Install Ansible](https://www.ansible.com/)
 - [2) Install ssh server on servers (if necessary)](docs/install-ssh.md)
 - [3) Encrypt admin password](docs/encrypt-admin-password.md)
-- [4) Create vault variable](docs/ansible-vault.md)
-- [5) Create needed ssh keys](docs/ssh-keys.md)
-- [6) Update Ansible inventory](docs/update-ansible-inventory.md)
-- [7) Install Ansible required roles](docs/install-ansible-required-roles.md)
-- [8) Pre-configure servers with Ansible](docs/pre-configure-servers-with-ansible.md)
-- [9) Configure servers with Ansible](docs/configure-servers-with-ansible.md)
+- [4) Specify docker daemon certificate passphrase](docs/docker-daemon-certificate.md)
+- [5) (Optional) Create vault variable](docs/ansible-vault.md)
+- [6) Create needed ssh keys](docs/ssh-keys.md)
+- [7) Update Ansible inventory](docs/update-ansible-inventory.md)
+- [8) Install Ansible required roles](docs/install-ansible-required-roles.md)
+- [9) Pre-configure servers with Ansible](docs/pre-configure-servers-with-ansible.md)
+- [10) Configure servers with Ansible](docs/configure-servers-with-ansible.md)
 
 <a name="tests"></a>
 ## II/ Tests with vagrant
@@ -30,10 +31,11 @@
 - [3) Install Ansible](https://www.ansible.com/)
 - [4) Configure DNS](docs/dns-configuration.md)
 - [5) Encrypt admin password](docs/encrypt-admin-password.md)
-- [6) Create vault variable](docs/ansible-vault.md)
-- [7) Create needed ssh keys](docs/ssh-keys.md)
-- [8) Install Ansible required roles](docs/install-ansible-required-roles.md)
-- [9) Launch test VM](docs/launch-vm.md)
+- [6) Specify docker daemon certificate passphrase](docs/docker-daemon-certificate.md)
+- [7) (Optional) Create vault variable](docs/ansible-vault.md)
+- [8) Create needed ssh keys](docs/ssh-keys.md)
+- [9) Install Ansible required roles](docs/install-ansible-required-roles.md)
+- [10) Launch test VM](docs/launch-vm.md)
  
 <b>Notes:</b>
 - Your computer needs to have at least 12Go ram

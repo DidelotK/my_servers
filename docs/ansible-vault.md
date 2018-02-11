@@ -1,17 +1,23 @@
 ## Create vault variable
 
-This project use ansible vault in order to encrypt sensible data.
+You can use ansible vault in order to encrypt sensitive data.
 
-So first create a `.vault_password` file in the `ansible` directory. This file will be used to encrypt/decrypt all the ansibled vaulted variables
+So first create a `.vault_password` file in the `ansible` directory.
 
 The file should only contain one password.
-   
-    ansible-vault encrypt_string 'your_var'
-    
-Here is the list of variables to encrypt in the project with the above command:
 
-    `dds_passphrase`
+Then encrypt all the data that you want
 
+### Encrypt string
 
-- Location: ansible/group-vars/manager.yml
-- Aim: The passphrase used to create docker TLS certificates
+```bash
+ansible-vault encrypt_string '<your-var-to-encrypt>' --vault-password-file='<path-to-vault-password-file>'
+```
+
+### Encrypt file (recommended)
+
+```bash
+ansible-vault encrypt '<path-to-file-to-encrypt>' --vault-password-file='<path-to-vault-password-file>'
+```
+
+<b>Note:</b> If you fork this project, be aware that all files having `.sensitive.yml` extension will not be commited (more secure)

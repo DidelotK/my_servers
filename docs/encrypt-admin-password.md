@@ -8,4 +8,6 @@ Here is the command to encrypt your password correctly (replace `salt` and `pass
 openssl passwd -salt 'salt' -1 'password'
 ```
 
-Then replace `admin_user_password` in `ansible/group_vars/all.yml` by the result of the above command.
+Then create a new file in `ansible/group_vars/all` named `vars.sentitive.yml` and put the following content:
+
+    admin_user_password: <your_encrypted_password>
