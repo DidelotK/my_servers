@@ -3,6 +3,7 @@
 - Fix https in mycv
 - Install ssh server via ansible local playbook
 - Test everything (vagrant in particular)
+- Vagrant add condition for inclusion of ansible vault file (this is file is optional now)
 - Switch to docker swarm
 - Improve/correct documentation
 
