@@ -21,13 +21,21 @@
       apt:
         update_cache: yes
 
-    - name: Create new user
+    - name: Create new admin user
       user:
         name: "{{ admin_user }}"
         password: "{{ admin_user_password }}"
         groups: sudo
         shell: /bin/bash
         append: yes
+
+    - name: Allow admin user to have passwordless sudo.
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^{{ admin_user }}'
+        line: '{{ admin_user }} ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
 
     - name: Set authorized key.
       authorized_key:

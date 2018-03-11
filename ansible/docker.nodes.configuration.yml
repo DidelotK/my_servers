@@ -32,6 +32,10 @@
         name: docker-compose
         state: present
 
+
+- hosts: managers
+  remote_user: "{{ admin_user }}"
+  tasks:
     - name: Determine swarm status.
       shell: >
         docker info | egrep '^Swarm: ' | cut -d ' ' -f2
@@ -40,29 +44,38 @@
     - name: Add manager to swarm operational group (if operational).
       add_host:
         hostname: "{{ ansible_hostname }}"
-        groups: swarm_manager_operational
-      when: "'active' in swarm_status.stdout_lines and 'managers' in group_names"
+        groups: swarm_managers_operational
+      when: "'active' in swarm_status.stdout_lines"
 
     - name: Add manager to swarm boostrap group (if not operational).
       add_host:
         hostname: "{{ ansible_hostname }}"
-        groups: swarm_manager_bootstrap
-      when: "'active' not in swarm_status.stdout_lines and 'managers' in group_names"
+        groups: swarm_managers_bootstrap
+      when: "'active' not in swarm_status.stdout_lines"
+
+
+- hosts: workers
+  remote_user: "{{ admin_user }}"
+  tasks:
+    - name: Determine swarm status.
+      shell: >
+        docker info | egrep '^Swarm: ' | cut -d ' ' -f2
+      register: swarm_status
 
     - name: Add worker to swarm operational group (if operational).
       add_host:
         hostname: "{{ ansible_hostname }}"
-        groups: swarm_worker_operational
-      when: "'active' in swarm_status.stdout_lines and 'workers' in group_names"
+        groups: swarm_workers_operational
+      when: "'active' in swarm_status.stdout_lines"
 
     - name: Add worker to swarm boostrap group (if not operational).
       add_host:
         hostname: "{{ ansible_hostname }}"
-        groups: swarm_worker_bootstrap
-      when: "'active' not in swarm_status.stdout_lines and 'workers' in group_names"
+        groups: swarm_workers_bootstrap
+      when: "'active' not in swarm_status.stdout_lines"
 
 
-- hosts: manager1
+- hosts: swarm_manager_bootstrap[0]
   remote_user: "{{ admin_user }}"
   become: yes
   tasks:
@@ -76,30 +89,28 @@
     - name: Add initialized host to swarm_manager_operational group.
       add_host:
         hostname: "{{ ansible_hostname }}"
-        groups: swarm_manager_operational
+        groups: swarm_managers_operational
       when: bootstrap_first_node | changed
 
+
+- hosts: swarm_manager_operational[0]
+  remote_user: "{{ admin_user }}"
+  tasks:
     - name: Retrieve swarm manager token.
-      shell: docker swarm join-token -q manager
+      command: docker swarm join-token -q manager
       register: swarm_manager_token
 
-    - name: Set swarm manager token fact.
-      set_fact:
-        swarm_manager_token: "{{ swarm_manager_token }}"
-
     - name: Retrieve swarm worker token.
-      shell: docker swarm join-token -q worker
+      command: docker swarm join-token -q worker
       register: swarm_worker_token
 
-    - name: Set swarm worker token fact.
-      set_fact:
-        swarm_manager_token: "{{ swarm_worker_token }}"
 
 - hosts: swarm_manager_bootstrap:!swarm_manager_operational
   become: true
+  gather_facts: no
   vars:
-    manager_operational_ip: "hostvars['manager1']['ansible_host']"
-    token: "{{ hostvars['manager1']['swarm_worker_token']['stdout'] }}"
+    manager_operational_ip: "{{ hostvars[groups['swarm_managers_operational'][0]]['ansible_host'] }}"
+    token: "{{ hostvars[groups['swarm_managers_operational'][0]]['swarm_manager_token']['stdout'] }}"
   tasks:
     - name: Join manager nodes to cluster.
       shell: >
@@ -111,13 +122,11 @@
 
 - hosts: swarm_worker_bootstrap
   become: true
+  gather_facts: no
   vars:
-    manager_operational_ip: "hostvars['manager1']['ansible_host']"
-    token: "{{ hostvars['manager1']['swarm_worker_token']['stdout'] }}"
+    manager_operational_ip: "{{ hostvars[groups['swarm_manager_operational'][0]]['ansible_host'] }}"
+    token: "{{ hostvars[groups['swarm_manager_operational'][0]]['swarm_worker_token']['stdout'] }}"
   tasks:
-    - debug:
-        var: hostvars
-
     - name: Join worker nodes to cluster.
       shell: >
         docker swarm join
@@ -125,8 +134,13 @@
         --token={{ token }}
         {{ manager_operational_ip }}:2377
 
+    - name: Add initialized host to swarm_worker_operational group.
+      add_host:
+        hostname: "{{ ansible_hostname }}"
+        groups: swarm_workers_operational
 
-- hosts: manager1
+
+- hosts: swarm_managers_operational[0]
   remote_user: "{{ admin_user }}"
   become: yes
   vars:

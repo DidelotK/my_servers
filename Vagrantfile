@@ -28,7 +28,7 @@ $ansible_extra_vars = {
     default_user: '',
     admin_user: ADMIN_USER
 }
-$ansible_host_vars = {
+$ansible_init_host_vars = {
     manager1: {
         ansible_host: MANAGER1_IP,
         ansible_port: '22'
@@ -38,11 +38,25 @@ $ansible_host_vars = {
         ansible_port: '22'
     }
 }
+$ansible_configuration_host_vars = {
+    manager1: {
+        ansible_user: ADMIN_USER,
+        ansible_host: MANAGER1_IP,
+        ansible_port: '22',
+        ansible_ssh_private_key_file: './ssh-keys/admin_id_rsa'
+    },
+    worker1: {
+        ansible_user: ADMIN_USER,
+        ansible_host: WORKER1_IP,
+        ansible_port: '22',
+        ansible_ssh_private_key_file: './ssh-keys/admin_id_rsa'
+    }
+}
 $ansible_groups = {
     managers: %w(manager1),
     workers: %w(worker1),
     swarm_nodes: %w(manager1 worker1),
-    all: %w(swarm_nodes)
+    all: %w(manager1 worker1)
 }
 
 Vagrant.configure(VAGRANT_VERSION) do |config|
@@ -88,45 +102,58 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       v.vmx['memsize'] = WORKER1_RAM
       v.vmx['numvcpus'] = WORKER1_CPU
     end
-  end
 
-  # Initialize the machines with a new admin user
-  config.vm.provision 'init', type: 'ansible' do |ansible_init|
-    if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
-      ansible_init.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
+
+    ##############################
+    #
+    #   Ansible provisioning
+    #
+    # ############################
+    # Note: Ansible is started in the last machine because vagrant does not support
+    # parallel multi-machine provisioning yet (https://github.com/hashicorp/vagrant/issues/1784)
+
+
+    # Initialize the machines with a new admin user
+    config.vm.provision 'init', type: 'ansible' do |ansible_init|
+      if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
+        ansible_init.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
+      end
+
+      ansible_init.limit = "all"
+      ansible_init.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
+      ansible_init.extra_vars = $ansible_extra_vars
+      ansible_init.host_vars = $ansible_init_host_vars
+      ansible_init.groups = $ansible_groups
+      ansible_init.playbook = 'ansible/site.init.yml'
     end
 
-    ansible_init.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
-    ansible_init.extra_vars = $ansible_extra_vars
-    ansible_init.host_vars = $ansible_host_vars
-    ansible_init.groups = $ansible_groups
-    ansible_init.playbook = 'ansible/site.init.yml'
-  end
-
-  # Configure the docker nodes
-  config.vm.provision 'configuration', type: 'ansible' do |ansible_configuration|
-    if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
-      ansible_configuration.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
+    # Configure the docker nodes
+    config.vm.provision 'configuration', type: 'ansible' do |ansible_configuration|
+      if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
+        ansible_configuration.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
+      end
+      ansible_configuration.limit = "all"
+      ansible_configuration.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
+      ansible_configuration.extra_vars = $ansible_extra_vars
+      ansible_configuration.host_vars = $ansible_configuration_host_vars
+      ansible_configuration.groups = $ansible_groups
+      ansible_configuration.verbose = "false"
+      # ansible_configuration.tags = 'docker_services'
+      ansible_configuration.playbook = 'ansible/docker.nodes.configuration.yml'
     end
 
-    ansible_configuration.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
-    ansible_configuration.extra_vars = $ansible_extra_vars
-    ansible_configuration.host_vars = $ansible_host_vars
-    ansible_configuration.groups = $ansible_groups
-    # ansible_configuration.tags = 'docker_services'
-    ansible_configuration.playbook = 'ansible/docker.nodes.configuration.yml'
-  end
+    # Launch services on docker swarm cluster
+    # config.vm.provision 'launch_services', type: 'ansible' do |ansible_launch_services|
+    #   if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
+    #     ansible_launch_services.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
+    #   end
+    #   ansible_launch_services.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
+    #   ansible_launch_services.extra_vars = $ansible_extra_vars
+    #   ansible_launch_services.host_vars = $ansible_host_vars
+    #   ansible_launch_services.groups = $ansible_groups
+    #   ansible_launch_services.playbook = 'ansible/docker.swarm.services.yml'
+    # end
 
-  # Launch services on docker swarm cluster
-  # config.vm.provision 'launch_services', type: 'ansible' do |ansible_launch_services|
-  #   if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
-  #     ansible_launch_services.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
-  #   end
-  #   ansible_launch_services.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
-  #   ansible_launch_services.extra_vars = $ansible_extra_vars
-  #   ansible_launch_services.host_vars = $ansible_host_vars
-  #   ansible_launch_services.groups = $ansible_groups
-  #   ansible_launch_services.playbook = 'ansible/docker.swarm.services.yml'
-  # end
+  end
 
 end

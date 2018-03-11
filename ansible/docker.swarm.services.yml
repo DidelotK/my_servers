@@ -5,8 +5,8 @@
   remote_user: "{{ admin_user }}"
   become: yes
   tasks:
-    - name: Tag the manager as the node for hosting the registry.
-      command: docker node update --label-add registry=true {{ ansible_hostname }}
+#    - name: Tag the manager as the node for hosting the registry.
+#      command: docker node update --label-add registry=true {{ ansible_hostname }}
 
 #    - name: Tag the manager as the entrypoint for nginx proxy
 #      shell: docker node update --label-add entrypoint=true {{ ansible_hostname }}
@@ -20,7 +20,7 @@
       command: |
         docker service create \
           --name registry \
-          --constraint 'node.labels.registry==true' \
+#          --constraint 'node.labels.registry==true' \
           --publish published=5000,target=5000 \
           --replicas 1 \
           registry:2
