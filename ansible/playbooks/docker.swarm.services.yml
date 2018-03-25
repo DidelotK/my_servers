@@ -2,7 +2,6 @@
 ########## DOCKER SWARM SERVICES ##########
 
 - hosts: manager1
-  remote_user: "{{ admin_user }}"
   become: yes
   tasks:
 #    - name: Tag the manager as the node for hosting the registry.
@@ -28,6 +27,6 @@
 
     - name: Build manager docker compose (nginx, jenkins, grafana, mycv, portainer).
       make:
-        chdir: "/home/{{ admin_user }}/docker/managers"
+        chdir: "/home/{{ ansible_user }}/docker/managers"
         target: build
       tags: docker_services

@@ -5,7 +5,6 @@
 #
 
 - hosts: all
-  remote_user: "{{ default_user }}"
   become: true
   gather_facts: false
   tasks:
@@ -20,6 +19,7 @@
     - name: Update apt.
       apt:
         update_cache: yes
+      changed_when: false
 
     - name: Create new admin user
       user:
@@ -46,4 +46,11 @@
     - name: Set hostname.
       hostname:
         name: "{{ inventory_hostname }}"
+      tags: hostname
+
+    - name: Update hosts file
+      lineinfile:
+        dest: /etc/hosts
+        line: "127.0.0.1 {{ inventory_hostname }}"
+        insertafter: "^127\\.0\\.0\\.1 localhost.*$"
       tags: hostname

@@ -17,7 +17,7 @@
 
     - role: docker
       docker_users:
-        - "{{ admin_user }}"
+        - "{{ ansible_user }}"
       docker_daemon_options:
         hosts:
           - "unix:///var/run/docker.sock"
@@ -32,7 +32,6 @@
         name: docker-compose
         state: present
 
-
 - hosts: managers
   remote_user: "{{ admin_user }}"
   tasks:
@@ -44,12 +43,14 @@
     - name: Add manager to swarm operational group (if operational).
       add_host:
         hostname: "{{ ansible_hostname }}"
+        inventory_dir: "{{ inventory_dir }}"
         groups: swarm_managers_operational
       when: "'active' in swarm_status.stdout_lines"
 
     - name: Add manager to swarm boostrap group (if not operational).
       add_host:
         hostname: "{{ ansible_hostname }}"
+        inventory_dir: "{{ inventory_dir }}"
         groups: swarm_managers_bootstrap
       when: "'active' not in swarm_status.stdout_lines"
 
@@ -65,19 +66,20 @@
     - name: Add worker to swarm operational group (if operational).
       add_host:
         hostname: "{{ ansible_hostname }}"
+        inventory_dir: "{{ inventory_dir }}"
         groups: swarm_workers_operational
       when: "'active' in swarm_status.stdout_lines"
 
     - name: Add worker to swarm boostrap group (if not operational).
       add_host:
         hostname: "{{ ansible_hostname }}"
+        inventory_dir: "{{ inventory_dir }}"
         groups: swarm_workers_bootstrap
       when: "'active' not in swarm_status.stdout_lines"
 
 
-- hosts: swarm_manager_bootstrap[0]
+- hosts: swarm_managers_bootstrap[0]
   remote_user: "{{ admin_user }}"
-  become: yes
   tasks:
     - name: Initialize swarm cluster.
       shell: >
@@ -89,11 +91,12 @@
     - name: Add initialized host to swarm_manager_operational group.
       add_host:
         hostname: "{{ ansible_hostname }}"
+        inventory_dir: "{{ inventory_dir }}"
         groups: swarm_managers_operational
       when: bootstrap_first_node | changed
 
 
-- hosts: swarm_manager_operational[0]
+- hosts: swarm_managers_operational[0]
   remote_user: "{{ admin_user }}"
   tasks:
     - name: Retrieve swarm manager token.
@@ -105,9 +108,8 @@
       register: swarm_worker_token
 
 
-- hosts: swarm_manager_bootstrap:!swarm_manager_operational
-  become: true
-  gather_facts: no
+- hosts: swarm_managers_bootstrap:!swarm_managers_operational
+  remote_user: "{{ admin_user }}"
   vars:
     manager_operational_ip: "{{ hostvars[groups['swarm_managers_operational'][0]]['ansible_host'] }}"
     token: "{{ hostvars[groups['swarm_managers_operational'][0]]['swarm_manager_token']['stdout'] }}"
@@ -120,12 +122,11 @@
         {{ manager_operational_ip }}:2377
 
 
-- hosts: swarm_worker_bootstrap
-  become: true
-  gather_facts: no
+- hosts: swarm_workers_bootstrap
+  remote_user: "{{ admin_user }}"
   vars:
-    manager_operational_ip: "{{ hostvars[groups['swarm_manager_operational'][0]]['ansible_host'] }}"
-    token: "{{ hostvars[groups['swarm_manager_operational'][0]]['swarm_worker_token']['stdout'] }}"
+    manager_operational_ip: "{{ hostvars[groups['swarm_managers_operational'][0]]['ansible_host'] }}"
+    token: "{{ hostvars[groups['swarm_managers_operational'][0]]['swarm_worker_token']['stdout'] }}"
   tasks:
     - name: Join worker nodes to cluster.
       shell: >
@@ -142,24 +143,21 @@
 
 - hosts: swarm_managers_operational[0]
   remote_user: "{{ admin_user }}"
-  become: yes
   vars:
-    jenkins_master_docker_path: "/home/{{ admin_user }}/docker/managers/jenkins-master"
-    jenkins_node_slave_docker_path: "/home/{{ admin_user }}/docker/managers/jenkins-node-slave"
-    docker_list_to_add_certs:
-      - "{{ jenkins_master_docker_path }}"
-      - "{{ jenkins_node_slave_docker_path }}"
     certs_list:
       - ca.pem
       - cert.pem
       - key.pem
   tasks:
+    - debug:
+        msg: "{{ ansible_user }}"
+
     - name: Copy docker to remote.
       copy:
-        src: ../docker
-        dest: "/home/{{ admin_user }}"
-        owner: "{{ admin_user }}"
-        group: "{{ admin_user }}"
+        src: ../../docker
+        dest: "/home/{{ ansible_user }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
         mode: 0644
         force: yes
       tags: docker_services
@@ -168,11 +166,11 @@
       copy:
         src: "{{ docker_tls_certs_path }}/{{ item.1 }}"
         dest: "{{ item.0 }}/certs/{{ item.1 }}"
-        owner: "{{ admin_user }}"
-        group: "{{ admin_user }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
         mode: 0644
         remote_src: yes
       with_nested:
-        - "{{ docker_list_to_add_certs }}"
+        - ["/home/{{ ansible_user }}/docker/managers/jenkins-master", "/home/{{ ansible_user }}/docker/managers/jenkins-node-slave"]
         - "{{ certs_list }}"
       tags: docker_services

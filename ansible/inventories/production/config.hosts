@@ -3,8 +3,5 @@ manager1 ansible_host=93.30.223.70
 [managers]
 manager1
 
-[swarm_nodes]
+[swarm_nodes:children]
 managers
-
-[all]
-swarm_nodes

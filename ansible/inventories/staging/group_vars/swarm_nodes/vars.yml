@@ -1,0 +1,1 @@
+docker_tls_certs_path: "/etc/ssl/certs/docker"
