@@ -1,1 +1,1 @@
-docker_tls_certs_path: "/etc/ssl/certs/docker"
+docker_tls_certs_path: "{{ ansible_env.HOME }}/.docker"
