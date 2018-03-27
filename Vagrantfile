@@ -9,12 +9,15 @@ VAGRANT_VERSION = '2'
 # Network configs
 MANAGER1_IP = '192.168.50.53'
 WORKER1_IP  = '192.168.50.52'
+WORKER2_IP  = '192.168.50.54'
 
 # Machines configs
 MANAGER1_RAM = 4096
 MANAGER1_CPU = 2
 WORKER1_RAM  = 4096
 WORKER1_CPU  = 2
+WORKER2_RAM  = 4096
+WORKER2_CPU  = 2
 
 # User configs
 ADMIN_USER                 = 'admin'
@@ -67,6 +70,21 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       v.vmx['memsize'] = WORKER1_RAM
       v.vmx['numvcpus'] = WORKER1_CPU
     end
+  end
+
+  # Define worker2 machine
+  config.vm.define 'worker2' do |worker2|
+    worker2.vm.network 'private_network', ip: WORKER2_IP, :bridge => '127.0.0.1'
+
+    worker2.vm.provider 'virtualbox' do |v|
+      v.memory = WORKER2_RAM
+      v.cpus = WORKER2_CPU
+    end
+
+    worker2.vm.provider 'vmware_fusion' do |v|
+      v.vmx['memsize'] = WORKER2_RAM
+      v.vmx['numvcpus'] = WORKER2_CPU
+    end
 
 
     ##############################
@@ -109,16 +127,18 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
     end
 
     # Launch services on docker swarm cluster
-    # config.vm.provision 'launch_services', type: 'ansible' do |ansible_launch_services|
-    #   if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
-    #     ansible_launch_services.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
-    #   end
-    #   ansible_launch_services.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
-    #   ansible_launch_services.extra_vars = $ansible_extra_vars
-    #   ansible_launch_services.host_vars = $ansible_host_vars
-    #   ansible_launch_services.groups = $ansible_groups
-    #   ansible_launch_services.playbook = 'ansible/playbooks/docker.swarm.services.yml'
-    # end
+    config.vm.provision 'launch_services', type: 'ansible' do |ansible_launch_services|
+      if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
+        ansible_launch_services.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
+      end
+      ansible_launch_services.limit = "all"
+      ansible_launch_services.force_remote_user = false
+      ansible_launch_services.config_file = ANSIBLE_CONFIG_FILE_PATH
+      ansible_launch_services.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
+      ansible_launch_services.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
+      ansible_launch_services.verbose = "false"
+      ansible_launch_services.playbook = 'ansible/playbooks/docker.swarm.services.yml'
+    end
 
   end
 

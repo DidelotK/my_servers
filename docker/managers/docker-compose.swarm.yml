@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   jenkinsmaster:
-    image: 192.168.50.51:5000/jenkins_master
+    image: 0.0.0.0:5000/jenkins_master
     build: jenkins-master
     volumes:
       - jenkins_logs:/var/log/jenkins
@@ -12,7 +12,7 @@ services:
       - services_network
     restart: always
   jenkinsnodeslave:
-    image: 192.168.50.51:5000/jenkins_node_slave
+    image: 0.0.0.0:5000/jenkins_node_slave
     build: jenkins-node-slave
   mycv:
     image: didelotkev/my_cv
@@ -29,10 +29,6 @@ services:
       - portainer_data:/data
     networks:
       - services_network
-    deploy:
-      placement:
-        constraints:
-          - node.role == manager
     restart: always
   grafana:
     image: grafana/grafana
@@ -44,7 +40,7 @@ services:
       - services_network
     restart: always
   nginx:
-    image: 192.168.50.51:5000/nginx_proxy
+    image: 0.0.0.0:5000/nginx_proxy
     build: nginx
     ports:
        - '80:80'
@@ -59,10 +55,6 @@ services:
       - nginx_certificates:/etc/letsencrypt
     networks:
       - services_network
-    deploy:
-      placement:
-        constraints:
-          - node.labels.entrypoint == yes
     restart: always
 volumes:
   jenkins_data:

@@ -27,6 +27,7 @@
         tlscacert: "{{ dds_server_cert_path }}/ca.pem"
         tlscert: "{{ dds_server_cert_path }}/server-cert.pem"
         tlskey: "{{ dds_server_cert_path }}/server-key.pem"
+
   post_tasks:
     - name: Install docker compose.
       become: yes
@@ -34,6 +35,10 @@
         name: docker-compose
         state: present
 
+########################################
+# Docker Swarm configuration
+# Inspired from: https://thisendout.com/2016/09/13/deploying-docker-swarm-with-ansible/
+########################################
 - hosts: managers
   remote_user: "{{ admin_user }}"
   tasks:
@@ -43,21 +48,9 @@
       changed_when: false
       register: swarm_status
 
-    - name: Add manager to swarm operational group (if operational).
-      add_host:
-        hostname: "{{ ansible_hostname }}"
-        inventory_dir: "{{ inventory_dir }}"
-        groups: swarm_managers_operational
-      changed_when: false
-      when: "'active' in swarm_status.stdout_lines"
-
-    - name: Add manager to swarm boostrap group (if not operational).
-      add_host:
-        hostname: "{{ ansible_hostname }}"
-        inventory_dir: "{{ inventory_dir }}"
-        groups: swarm_managers_bootstrap
-      changed_when: false
-      when: "'active' not in swarm_status.stdout_lines"
+    - name: Add manager to swarm operational group.
+      group_by:
+        key: "swarm_managers_{{ swarm_status.stdout }}"
 
 
 - hosts: workers
@@ -70,41 +63,29 @@
       register: swarm_status
 
     - name: Add worker to swarm operational group (if operational).
-      add_host:
-        hostname: "{{ ansible_hostname }}"
-        inventory_dir: "{{ inventory_dir }}"
-        groups: swarm_workers_operational
-      changed_when: false
-      when: "'active' in swarm_status.stdout_lines"
-
-    - name: Add worker to swarm boostrap group (if not operational).
-      add_host:
-        hostname: "{{ ansible_hostname }}"
-        inventory_dir: "{{ inventory_dir }}"
-        groups: swarm_workers_bootstrap
-      changed_when: false
-      when: "'active' not in swarm_status.stdout_lines"
+      group_by:
+        key: "swarm_workers_{{ swarm_status.stdout }}"
 
 
-- hosts: swarm_managers_bootstrap[0]
+- hosts: swarm_managers_inactive[0]
   remote_user: "{{ admin_user }}"
   tasks:
     - name: Initialize swarm cluster.
       shell: >
         docker swarm init
-        --advertise-addr={{ ansible_host }}:2377
-      when: "'swarm_manager_operational' not in groups"
+        --advertise-addr {{ swarm_iface | default('eth0') }}
+      when: "'swarm_workers_active' not in groups"
       register: bootstrap_first_node
 
-    - name: Add initialized host to swarm_manager_operational group.
+    - name: Add initialized host to swarm_manager_active group.
       add_host:
         hostname: "{{ ansible_hostname }}"
         inventory_dir: "{{ inventory_dir }}"
-        groups: swarm_managers_operational
+        groups: swarm_managers_active
       when: bootstrap_first_node | changed
 
 
-- hosts: swarm_managers_operational[0]
+- hosts: swarm_managers_active[0]
   remote_user: "{{ admin_user }}"
   tasks:
     - name: Retrieve swarm manager token.
@@ -118,67 +99,27 @@
       register: swarm_worker_token
 
 
-- hosts: swarm_managers_bootstrap:!swarm_managers_operational
+- hosts: swarm_managers_inactive:!swarm_managers_active
   remote_user: "{{ admin_user }}"
   vars:
-    manager_operational_ip: "{{ hostvars[groups['swarm_managers_operational'][0]]['ansible_host'] }}"
-    token: "{{ hostvars[groups['swarm_managers_operational'][0]]['swarm_manager_token']['stdout'] }}"
+    manager_operational_ip: "{{ hostvars[groups['swarm_managers_active'][0]]['ansible_host'] }}"
+    token: "{{ hostvars[groups['swarm_managers_active'][0]]['swarm_manager_token']['stdout'] }}"
   tasks:
     - name: Join manager nodes to cluster.
       shell: >
         docker swarm join
-        --advertise-addr={{ manager_operational_ip }}:2377
         --token={{ token }}
         {{ manager_operational_ip }}:2377
 
 
-- hosts: swarm_workers_bootstrap
+- hosts: swarm_workers_inactive
   remote_user: "{{ admin_user }}"
   vars:
-    manager_operational_ip: "{{ hostvars[groups['swarm_managers_operational'][0]]['ansible_host'] }}"
-    token: "{{ hostvars[groups['swarm_managers_operational'][0]]['swarm_worker_token']['stdout'] }}"
+    manager_ip: "{{ hostvars[groups['swarm_managers_active'][0]]['ansible_host'] }}"
+    token: "{{ hostvars[groups['swarm_managers_active'][0]]['swarm_worker_token']['stdout'] }}"
   tasks:
     - name: Join worker nodes to cluster.
       shell: >
         docker swarm join
-        --advertise-addr={{ manager_operational_ip }}:2377
         --token={{ token }}
-        {{ manager_operational_ip }}:2377
-
-    - name: Add initialized host to swarm_worker_operational group.
-      add_host:
-        hostname: "{{ ansible_hostname }}"
-        groups: swarm_workers_operational
-      changed_when: false
-
-
-- hosts: swarm_managers_operational[0]
-  remote_user: "{{ admin_user }}"
-  vars:
-    certs_list:
-      - ca.pem
-      - cert.pem
-      - key.pem
-  tasks:
-    - name: Copy docker to remote.
-      copy:
-        src: ../../docker
-        dest: "/home/{{ ansible_user }}"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: 0644
-        force: yes
-      tags: docker_services
-
-    - name: Copy certificates into folders of docker images that will use tcp to connect to host daemon.
-      copy:
-        src: "{{ docker_tls_certs_path }}/{{ item.1 }}"
-        dest: "{{ item.0 }}/certs/{{ item.1 }}"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: 0644
-        remote_src: yes
-      with_nested:
-        - ["/home/{{ ansible_user }}/docker/managers/jenkins-master", "/home/{{ ansible_user }}/docker/managers/jenkins-node-slave"]
-        - "{{ certs_list }}"
-      tags: docker_services
+        {{ manager_ip }}:2377

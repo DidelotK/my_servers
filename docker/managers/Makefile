@@ -5,12 +5,15 @@ run:
 	docker-compose up -d --build
 	docker-compose stop jenkinsnodeslave
 	docker-compose rm -f jenkinsnodeslave
-run-swarm:
-	docker stack deploy --compose-file docker-compose.swarm.yml docker_services
 clean:
 	docker-compose down
-
 clean-volume:
 	docker-compose down -v
-push:
+
+
+build-swarm:
+	docker-compose build --compose-file docker-compose.swarm.yml
+run-swarm:
+	docker stack deploy --compose-file docker-compose.swarm.yml docker_services
+push-swarm:
 	docker-compose -f docker-compose.swarm.yml push

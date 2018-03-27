@@ -1,32 +1,52 @@
 ---
 ########## DOCKER SWARM SERVICES ##########
 
-- hosts: manager1
-  become: yes
+- hosts: managers[0]
+  remote_user: "{{ admin_user }}"
+  vars:
+    certs_list:
+      - ca.pem
+      - cert.pem
+      - key.pem
   tasks:
-#    - name: Tag the manager as the node for hosting the registry.
-#      command: docker node update --label-add registry=true {{ ansible_hostname }}
+    - name: Copy docker to remote.
+      copy:
+        src: ../../docker
+        dest: "/home/{{ ansible_user }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0644
+        force: yes
 
-#    - name: Tag the manager as the entrypoint for nginx proxy
-#      shell: docker node update --label-add entrypoint=true {{ ansible_hostname }}
+    - name: Start swarm services
+      block:
+        - name: Check if the registry service is already started
+          shell: "docker service ls | grep registry"
+          ignore_errors: yes
+          register: registry_started
 
-# Check if registry already started
-    - name: Check if the registry service is already started
-      command: docker service ls | grep registry
-      register: is_registry_started
+        - name: Start the registry as a service
+          command: |
+            docker service create \
+              --name registry \
+              -p 5000:5000  \
+              -p 5000:5000/udp  \
+              registry:2
+          when: registry_started.stdout == ""
 
-    - name: Run the registry as a service
-      command: |
-        docker service create \
-          --name registry \
-#          --constraint 'node.labels.registry==true' \
-          --publish published=5000,target=5000 \
-          --replicas 1 \
-          registry:2
-      when: not is_registry_started
+    - name: Copy certificates into folders of docker images that will use tcp to connect to host daemon.
+      copy:
+        src: "{{ docker_tls_certs_path }}/{{ item.1 }}"
+        dest: "{{ item.0 }}/certs/{{ item.1 }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0644
+        remote_src: yes
+      with_nested:
+        - ["/home/{{ ansible_user }}/docker/managers/jenkins-master", "/home/{{ ansible_user }}/docker/managers/jenkins-node-slave"]
+        - "{{ certs_list }}"
 
-    - name: Build manager docker compose (nginx, jenkins, grafana, mycv, portainer).
-      make:
-        chdir: "/home/{{ ansible_user }}/docker/managers"
-        target: build
-      tags: docker_services
+#        - name: Build manager docker compose (nginx, jenkins, grafana, mycv, portainer).
+#          make:
+#            chdir: "/home/{{ ansible_user }}/docker/managers"
+#            target: build
