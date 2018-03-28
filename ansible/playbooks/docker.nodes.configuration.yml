@@ -27,6 +27,8 @@
         tlscacert: "{{ dds_server_cert_path }}/ca.pem"
         tlscert: "{{ dds_server_cert_path }}/server-cert.pem"
         tlskey: "{{ dds_server_cert_path }}/server-key.pem"
+        insecure-registries:
+          - "0.0.0.0:5000"
 
   post_tasks:
     - name: Install docker compose.

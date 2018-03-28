@@ -12,8 +12,8 @@ clean-volume:
 
 
 build-swarm:
-	docker-compose build --compose-file docker-compose.swarm.yml
+	docker-compose -f docker-compose.swarm.yml build
 run-swarm:
-	docker stack deploy --compose-file docker-compose.swarm.yml docker_services
+	docker stack deploy -c docker-compose.swarm.yml docker_services
 push-swarm:
 	docker-compose -f docker-compose.swarm.yml push
