@@ -96,37 +96,52 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
     # parallel multi-machine provisioning yet (https://github.com/hashicorp/vagrant/issues/1784)
 
 
-    # Initialize the machines with a new admin user
-    config.vm.provision 'init', type: 'ansible' do |ansible_init|
+    # Pre-configure the machines
+    config.vm.provision 'servers_preconfiguration', type: 'ansible' do |ansible_servers_preconfiguration|
       if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
-        ansible_init.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
+        ansible_servers_preconfiguration.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
       end
 
-      ansible_init.limit = "all"
-      ansible_init.force_remote_user = false
-      ansible_init.config_file = ANSIBLE_CONFIG_FILE_PATH
-      ansible_init.inventory_path = ANSIBLE_INIT_INVENTORY_PATH
-      ansible_init.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
-      ansible_init.verbose = "false"
-      ansible_init.playbook = 'ansible/playbooks/site.init.yml'
+      ansible_servers_preconfiguration.limit = "all"
+      ansible_servers_preconfiguration.force_remote_user = false
+      ansible_servers_preconfiguration.config_file = ANSIBLE_CONFIG_FILE_PATH
+      ansible_servers_preconfiguration.inventory_path = ANSIBLE_INIT_INVENTORY_PATH
+      ansible_servers_preconfiguration.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
+      ansible_servers_preconfiguration.verbose = "false"
+      ansible_servers_preconfiguration.playbook = 'ansible/playbooks/servers_preconfiguration.yml'
     end
 
-    # Configure the docker nodes
-    config.vm.provision 'configuration', type: 'ansible' do |ansible_configuration|
+    # Install docker (with docker compose) on nodes
+    config.vm.provision 'docker_installation', type: 'ansible' do |ansible_docker_installation|
       if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
-        ansible_configuration.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
+        ansible_docker_installation.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
       end
-      ansible_configuration.limit = "all"
-      ansible_configuration.force_remote_user = false
-      ansible_configuration.config_file = ANSIBLE_CONFIG_FILE_PATH
-      ansible_configuration.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
-      ansible_configuration.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
-      ansible_configuration.verbose = "false"
-      # ansible_configuration.tags = 'docker_services'
-      ansible_configuration.playbook = 'ansible/playbooks/docker.nodes.configuration.yml'
+      ansible_docker_installation.limit = "all"
+      ansible_docker_installation.force_remote_user = false
+      ansible_docker_installation.config_file = ANSIBLE_CONFIG_FILE_PATH
+      ansible_docker_installation.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
+      ansible_docker_installation.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
+      ansible_docker_installation.verbose = "false"
+      # ansible_docker_installation.tags = 'docker_services'
+      ansible_docker_installation.playbook = 'ansible/playbooks/docker_installation.yml'
     end
 
-    # Launch services on docker swarm cluster
+    # Configure docker swarm on cluster
+    config.vm.provision 'swarm_configuration', type: 'ansible' do |ansible_swarm_configuration|
+      if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
+        ansible_swarm_configuration.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
+      end
+      ansible_swarm_configuration.limit = "all"
+      ansible_swarm_configuration.force_remote_user = false
+      ansible_swarm_configuration.config_file = ANSIBLE_CONFIG_FILE_PATH
+      ansible_swarm_configuration.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
+      ansible_swarm_configuration.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
+      ansible_swarm_configuration.verbose = "false"
+      # ansible_swarm_configuration.tags = 'docker_services'
+      ansible_swarm_configuration.playbook = 'ansible/playbooks/swarm_configuration.yml'
+    end
+
+    # Launch services on swarm cluster
     config.vm.provision 'launch_services', type: 'ansible' do |ansible_launch_services|
       if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
         ansible_launch_services.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
@@ -137,7 +152,7 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       ansible_launch_services.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
       ansible_launch_services.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
       ansible_launch_services.verbose = "false"
-      ansible_launch_services.playbook = 'ansible/playbooks/docker.swarm.services.yml'
+      ansible_launch_services.playbook = 'ansible/playbooks/launch_swarm_services.yml'
     end
 
   end

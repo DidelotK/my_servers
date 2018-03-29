@@ -1,4 +1,5 @@
 version: '3.3'
+
 services:
   jenkinsmaster:
     image: 0.0.0.0:5000/jenkins_master
@@ -14,6 +15,8 @@ services:
   jenkinsnodeslave:
     image: 0.0.0.0:5000/jenkins_node_slave
     build: jenkins-node-slave
+    deploy:
+      replicas: 0
   mycv:
     image: didelotkev/my_cv
     volumes:
@@ -28,6 +31,10 @@ services:
       - portainer_data:/data
     networks:
       - services_network
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
     restart: always
   grafana:
     image: grafana/grafana
@@ -54,7 +61,13 @@ services:
       - nginx_certificates:/etc/letsencrypt
     networks:
       - services_network
+    depends_on:
+      - jenkinsmaster
+      - mycv
+      - portainer
+      - grafana
     restart: always
+
 volumes:
   jenkins_data:
   jenkins_logs:
@@ -66,6 +79,7 @@ volumes:
   mycv:
   nginx_logs:
   nginx_certificates:
+
 networks:
   services_network:
     driver: overlay

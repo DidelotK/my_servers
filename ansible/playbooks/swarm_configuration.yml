@@ -1,45 +1,6 @@
 ---
-########## DOCKER NODES CONFIGURATION ##########
-
-- hosts: swarm_nodes
-  remote_user: "{{ admin_user }}"
-  roles:
-    - role: pip
-      become: yes
-
-    - role: docker-daemon-certificate
-      dds_host: "{{ ansible_host }}"
-      dds_country: "FR"
-      dds_state: "France"
-      dds_locality: "Paris"
-      dds_organization: "DidelotCorp"
-      dds_client_cert_path: "{{ docker_tls_certs_path }}"
-
-    - role: docker
-      become: yes
-      docker_users:
-        - "{{ ansible_user }}"
-      docker_daemon_options:
-        hosts:
-          - "unix:///var/run/docker.sock"
-          - "tcp://{{ ansible_host }}:2376"
-        tlsverify: true
-        tlscacert: "{{ dds_server_cert_path }}/ca.pem"
-        tlscert: "{{ dds_server_cert_path }}/server-cert.pem"
-        tlskey: "{{ dds_server_cert_path }}/server-key.pem"
-        insecure-registries:
-          - "0.0.0.0:5000"
-
-  post_tasks:
-    - name: Install docker compose.
-      become: yes
-      pip:
-        name: docker-compose
-        state: present
-
 ########################################
 # Docker Swarm configuration
-# Inspired from: https://thisendout.com/2016/09/13/deploying-docker-swarm-with-ansible/
 ########################################
 - hosts: managers
   remote_user: "{{ admin_user }}"
