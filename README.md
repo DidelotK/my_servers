@@ -1,8 +1,8 @@
 # My servers configurations
 
 <p align="center">
-  <img src="docs/img/services.png"
-  alt="Docker services"/>
+  <img src="docs/img/my_servers.png"
+  alt="My servers architecture"/>
 </p>
 
 ## Summary
@@ -21,8 +21,7 @@
 - [6) Create needed ssh keys](docs/ssh-keys.md)
 - [7) Update Ansible inventory](docs/update-ansible-inventory.md)
 - [8) Install Ansible required roles](docs/install-ansible-required-roles.md)
-- [9) Pre-configure servers with Ansible](docs/pre-configure-servers-with-ansible.md)
-- [10) Configure servers with Ansible](docs/configure-servers-with-ansible.md)
+- [9) Run docker swarm services with Ansible](docs/run-swarm-services-with-ansible.md)
 
 <a name="tests"></a>
 ## II/ Tests with vagrant

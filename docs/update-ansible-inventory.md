@@ -1,15 +1,7 @@
 ## Update ansible inventory
 
-Ansible need to know the hosts to launch the configuration so add
-in the `ansible/inventory` file your hosts and the link to there ssh key like bellow:
+Ansible needs to know the hosts to launch the configuration so add
+in the `ansible/inventories/production` file your inventories.
 
-    manager1 ansible_host=your_manager_ip # your manager ip (jenkins, grafana ...)
-    
-    [managers]
-    manager1
+You can find inventories examples in `ansible/inventories/staging`
 
-    [swarm_nodes]
-    managers
-    
-    [all]
-    swarm_nodes
