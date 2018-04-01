@@ -1,0 +1,58 @@
+---
+########## INITIALIZATION PLAYBOOK ##########
+#
+# This playbook initialize all the servers
+#
+
+- hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Install python 2.
+      raw: test -e /usr/bin/python || (apt-get -y update && apt-get install -y python-minimal)
+      register: python_install_result
+      changed_when: python_install_result.stdout != ""
+
+    - name: Set default locale.
+      lineinfile: dest=/etc/default/locale
+        regexp="LC_ALL"
+        line="LC_ALL=\"en_US.UTF-8\""
+
+    - name: Update apt.
+      apt:
+        update_cache: yes
+      changed_when: false
+
+    - name: Create new admin user
+      user:
+        name: "{{ admin_user }}"
+        password: "{{ admin_user_password }}"
+        groups: sudo
+        shell: /bin/bash
+        append: yes
+
+    - name: Allow admin user to have passwordless sudo.
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^{{ admin_user }}'
+        line: '{{ admin_user }} ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: Set authorized key.
+      authorized_key:
+        user: "{{ admin_user }}"
+        state: present
+        key: "{{ lookup('file', path_to_ssh_admin_public_keys) }}"
+
+    - name: Set hostname.
+      hostname:
+        name: "{{ inventory_hostname }}"
+      tags: hostname
+
+    - name: Update hosts file
+      lineinfile:
+        dest: /etc/hosts
+        line: "127.0.0.1 {{ inventory_hostname }}"
+        insertafter: "^127\\.0\\.0\\.1 localhost.*$"
+      tags: hostname

@@ -1,7 +1,7 @@
 # TODO
-
-- Install ssh server via ansible local playbook
-- Test everything (vagrant in particular)
-- Make LDAP auth for all apps (OneLogin)
-- Switch to docker swarm/kubernetes
 - Improve/correct documentation
+- Create server packer image
+- Fix https in mycv
+- Install blueOcean on jenkins and configure every plugin on build instead of first time running container
+- Make LDAP auth for all apps
+- Add HaProxy in front of swarm cluster

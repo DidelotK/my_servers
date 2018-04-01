@@ -5,14 +5,16 @@
 .vagrant
 *.log
 
-# Credentials
+# Sensitive data
 .vault_password
 .credentials
 ssh-keys/*
+**/*.sensitive.yml
 
 # Ansible
 **/roles/*
 *.retry
 *.pem
+ansible/Makefile
 
 !**/.gitkeep

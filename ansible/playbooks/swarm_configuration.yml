@@ -1,0 +1,97 @@
+---
+########################################
+# Docker Swarm configuration
+########################################
+- hosts: managers
+  remote_user: "{{ admin_user }}"
+  tasks:
+    - name: Determine swarm status.
+      block:
+        - shell: "docker info | egrep '^Swarm: ' | cut -d ' ' -f2"
+          changed_when: false
+          register: swarm_status
+
+        - assert:
+            that:
+              - "'active' == swarm_status.stdout or 'inactive' == swarm_status.stdout"
+
+
+    - name: Add manager to swarm operational group.
+      group_by:
+        key: "swarm_managers_{{ swarm_status.stdout }}"
+
+
+- hosts: workers
+  remote_user: "{{ admin_user }}"
+  tasks:
+    - name: Determine swarm status.
+      block:
+        - shell: "docker info | egrep '^Swarm: ' | cut -d ' ' -f2"
+          changed_when: false
+          register: swarm_status
+
+        - assert:
+            that:
+              - "'active' == swarm_status.stdout or 'inactive' == swarm_status.stdout"
+
+    - name: Add worker to swarm operational group (if operational).
+      group_by:
+        key: "swarm_workers_{{ swarm_status.stdout }}"
+
+
+- hosts: swarm_managers_inactive[0]
+  remote_user: "{{ admin_user }}"
+  tasks:
+    - name: Initialize swarm cluster.
+      shell: >
+        docker swarm init
+        --advertise-addr {{ swarm_iface | default('eth0') }}
+      when: "'swarm_workers_active' not in groups"
+      register: bootstrap_first_node
+
+    - name: Add initialized host to swarm_manager_active group.
+      add_host:
+        hostname: "{{ ansible_hostname }}"
+        inventory_dir: "{{ inventory_dir }}"
+        groups: swarm_managers_active
+      when: bootstrap_first_node | changed
+
+
+- hosts: swarm_managers_active[0]
+  remote_user: "{{ admin_user }}"
+  tasks:
+    - name: Retrieve swarm manager token.
+      command: docker swarm join-token -q manager
+      changed_when: false
+      register: swarm_manager_token
+
+    - name: Retrieve swarm worker token.
+      command: docker swarm join-token -q worker
+      changed_when: false
+      register: swarm_worker_token
+
+
+- hosts: swarm_managers_inactive:!swarm_managers_active
+  remote_user: "{{ admin_user }}"
+  vars:
+    manager_operational_ip: "{{ hostvars[groups['swarm_managers_active'][0]]['ansible_host'] }}"
+    token: "{{ hostvars[groups['swarm_managers_active'][0]]['swarm_manager_token']['stdout'] }}"
+  tasks:
+    - name: Join manager nodes to cluster.
+      shell: >
+        docker swarm join
+        --token={{ token }}
+        {{ manager_operational_ip }}:2377
+
+
+- hosts: swarm_workers_inactive
+  remote_user: "{{ admin_user }}"
+  vars:
+    manager_ip: "{{ hostvars[groups['swarm_managers_active'][0]]['ansible_host'] }}"
+    token: "{{ hostvars[groups['swarm_managers_active'][0]]['swarm_worker_token']['stdout'] }}"
+  tasks:
+    - name: Join worker nodes to cluster.
+      shell: >
+        docker swarm join
+        --token={{ token }}
+        {{ manager_ip }}:2377

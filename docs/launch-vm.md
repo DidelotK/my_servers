@@ -1,8 +1,7 @@
-# Run and configure servers
+# Launch test VM
 
 Run this command to create the machines vms and launch provisioning.
 ```bash
-cd devOps
 vagrant up --provision
 ```
 

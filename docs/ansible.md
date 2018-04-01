@@ -7,24 +7,23 @@
 Ansible need to know the host to launch the configuration so add
 in the `ansible/inventory` file your hosts and the link to there ssh key like bellow:
 
-    webserver ansible_host=35.159.19.245
-    controller ansible_host=35.159.19.246
+    manager1 ansible_host=35.159.19.246
     
-    [ec2]
-    webserver
+    [managers]
+    manager1
     
-    [ec2:vars]
-    ansible_ssh_private_key_file=./key_webservers.pem
+    [swarm_nodes]
+    managers
     
     [all]
-    webserver
+    swarm_nodes
 
 ## Install ansible role requirements
 ```bash
 ansible-galaxy install -p ./roles -r requirements.yml
 ```
 
-## Launch servers configuration (controller + webserver)
+## Launch servers configuration (manager + webserver)
 ```bash
-ansible-playbook controllers.configuration.yml --ask-sudo-pass -i ./inventories/production --vault-password-file .vault_password -e admin_user=admin
+ansible-playbook docker.nodes.configuration.yml --ask-sudo-pass -i ./inventories/production --vault-password-file .vault_password -e admin_user=admin
 ```

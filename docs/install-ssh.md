@@ -1,5 +1,4 @@
-# I/ Prerequisites
-## 2) Install ssh server on servers
+## Install ssh server on servers
 
 This part is in case you don't have ssh server configured
 
@@ -26,5 +25,3 @@ Open `/etc/hosts.deny` and ajust the following line to deny all other connexion
 
 ## Bibliography
 http://www.octetmalin.net/linux/tutoriels/ssh-fichier-etc-sshd_config-configuration-machine-serveur.php
-
-<b>Next:</b> [Create vault variable](encrypt-admin-password.md)

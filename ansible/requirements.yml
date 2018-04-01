@@ -3,7 +3,7 @@
 - src: https://github.com/geerlingguy/ansible-role-pip.git
   name: pip
 
-- src: https://github.com/ansible/role-secure-docker-daemon.git
+- src: https://github.com/DidelotDevops/ansible-generate-docker-certificates
   name: docker-daemon-certificate
   
 - src: https://github.com/DidelotK/ansible-role-docker.git

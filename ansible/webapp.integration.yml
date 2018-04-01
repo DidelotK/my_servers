@@ -1,7 +1,0 @@
----
-
-- hosts: webserver
-  become: true
-  tasks:
-    - debub:
-      msg: "Coucou"

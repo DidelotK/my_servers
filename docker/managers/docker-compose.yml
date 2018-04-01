@@ -1,0 +1,72 @@
+version: '3.3'
+services:
+  jenkinsmaster:
+    image: jenkins_master
+    build: jenkins-master
+    volumes:
+      - jenkins_logs:/var/log/jenkins
+      - jenkins_data:/var/jenkins_home
+    ports:
+      - '50000:50000'
+    networks:
+      - services_network
+    restart: always
+  jenkinsnodeslave:
+    image: jenkins_node_slave
+    build: jenkins-node-slave
+  mycv:
+    image: didelotkev/my_cv
+    volumes:
+      - mycv_logs:/var/log/nginx
+    networks:
+      - services_network
+    restart: always
+  portainer:
+    privileged: true
+    image: portainer/portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - services_network
+    restart: always
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - grafana_configs:/etc/grafana
+      - grafana_logs:/var/log/grafana
+      - grafana_data:/var/lib/grafana
+    networks:
+      - services_network
+    restart: always
+  nginx:
+    image: nginx_proxy
+    build: nginx
+    ports:
+       - '80:80'
+       - '443:443'
+    depends_on:
+      - jenkinsmaster
+      - mycv
+      - portainer
+      - grafana
+    volumes:
+      - nginx_logs:/var/log/nginx
+      - nginx_certificates:/etc/letsencrypt
+    networks:
+      - services_network
+    restart: always
+volumes:
+  jenkins_data:
+  jenkins_logs:
+  mycv_logs:
+  portainer_data:
+  grafana_configs:
+  grafana_logs:
+  grafana_data:
+  mycv:
+  nginx_logs:
+  nginx_certificates:
+networks:
+  services_network:
+    driver: overlay
