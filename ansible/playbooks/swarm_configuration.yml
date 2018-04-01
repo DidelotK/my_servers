@@ -6,10 +6,15 @@
   remote_user: "{{ admin_user }}"
   tasks:
     - name: Determine swarm status.
-      shell: >
-        docker info | egrep '^Swarm: ' | cut -d ' ' -f2
-      changed_when: false
-      register: swarm_status
+      block:
+        - shell: "docker info | egrep '^Swarm: ' | cut -d ' ' -f2"
+          changed_when: false
+          register: swarm_status
+
+        - assert:
+            that:
+              - "'active' == swarm_status.stdout or 'inactive' == swarm_status.stdout"
+
 
     - name: Add manager to swarm operational group.
       group_by:
@@ -20,10 +25,14 @@
   remote_user: "{{ admin_user }}"
   tasks:
     - name: Determine swarm status.
-      shell: >
-        docker info | egrep '^Swarm: ' | cut -d ' ' -f2
-      changed_when: false
-      register: swarm_status
+      block:
+        - shell: "docker info | egrep '^Swarm: ' | cut -d ' ' -f2"
+          changed_when: false
+          register: swarm_status
+
+        - assert:
+            that:
+              - "'active' == swarm_status.stdout or 'inactive' == swarm_status.stdout"
 
     - name: Add worker to swarm operational group (if operational).
       group_by:
