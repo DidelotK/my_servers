@@ -1,8 +1,8 @@
 # My servers configurations
 
 <p align="center">
-  <img src="docs/img/services.png"
-  alt="Docker services"/>
+  <img src="docs/img/my_servers.png"
+  alt="My servers architecture"/>
 </p>
 
 ## Summary
