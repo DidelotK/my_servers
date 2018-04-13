@@ -1,5 +1,20 @@
 version: '3.3'
 services:
+  haproxy:
+    image: dockercloud/haproxy
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    links:
+      - nginx
+    depends_on:
+      - nginx
+    networks:
+      - services_network
+    restart: always
+
   jenkinsmaster:
     image: jenkins_master
     build: jenkins-master
@@ -11,6 +26,7 @@ services:
     networks:
       - services_network
     restart: always
+
   jenkinsnodeslave:
     image: jenkins_node_slave
     build: jenkins-node-slave
@@ -21,6 +37,7 @@ services:
     networks:
       - services_network
     restart: always
+
   portainer:
     privileged: true
     image: portainer/portainer
@@ -30,6 +47,7 @@ services:
     networks:
       - services_network
     restart: always
+
   grafana:
     image: grafana/grafana
     volumes:
@@ -39,12 +57,12 @@ services:
     networks:
       - services_network
     restart: always
+
   nginx:
     image: nginx_proxy
     build: nginx
-    ports:
-       - '80:80'
-       - '443:443'
+    environment:
+      - SERVICE_PORTS=80
     depends_on:
       - jenkinsmaster
       - mycv
@@ -56,6 +74,7 @@ services:
     networks:
       - services_network
     restart: always
+
 volumes:
   jenkins_data:
   jenkins_logs:
@@ -64,9 +83,7 @@ volumes:
   grafana_configs:
   grafana_logs:
   grafana_data:
-  mycv:
   nginx_logs:
   nginx_certificates:
 networks:
   services_network:
-    driver: overlay

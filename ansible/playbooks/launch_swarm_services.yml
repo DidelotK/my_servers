@@ -2,6 +2,12 @@
 ########################################
 # Launch services on swarm
 ########################################
+- hosts: haproxys
+  remote_user: "{{ admin_user }}"
+  tasks:
+    - name: Tag haproxy in docker swarm.
+      shell: "docker node update --label-add haproxy=true {{ ansible_hostname }}"
+
 - hosts: managers[0]
   remote_user: "{{ admin_user }}"
   vars:

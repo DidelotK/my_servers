@@ -1,3 +1,5 @@
 manager1 ansible_user=vagrant ansible_host=192.168.50.53 ansible_port=22 ansible_ssh_private_key_file=./.vagrant/machines/manager1/virtualbox/private_key
 worker1  ansible_user=vagrant ansible_host=192.168.50.52 ansible_port=22 ansible_ssh_private_key_file=./.vagrant/machines/worker1/virtualbox/private_key
 worker2  ansible_user=vagrant ansible_host=192.168.50.54 ansible_port=22 ansible_ssh_private_key_file=./.vagrant/machines/worker2/virtualbox/private_key
+haproxy1  ansible_user=vagrant ansible_host=192.168.50.61 ansible_port=22 ansible_ssh_private_key_file=./.vagrant/machines/haproxy1/virtualbox/private_key
+haproxy2  ansible_user=vagrant ansible_host=192.168.50.62 ansible_port=22 ansible_ssh_private_key_file=./.vagrant/machines/haproxy2/virtualbox/private_key
