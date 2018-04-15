@@ -1,0 +1,5 @@
+---
+- hosts: haproxys
+  become: yes
+  roles:
+    - role: keepalived

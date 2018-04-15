@@ -1,10 +1,12 @@
 ---
-
 - src: https://github.com/geerlingguy/ansible-role-pip.git
   name: pip
 
 - src: https://github.com/DidelotDevops/ansible-generate-docker-certificates
   name: docker-daemon-certificate
   
-- src: https://github.com/DidelotK/ansible-role-docker.git
+- src: https://github.com/DidelotDevops/ansible-docker
   name: docker
+
+- src: https://github.com/DidelotDevops/ansible-keepalived
+  name: keepalived

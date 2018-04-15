@@ -127,7 +127,7 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
     #
     #   Ansible provisioning
     #
-    ##############################
+    ##############################configure_keepalived
     # Note: Ansible is started in the last machine because vagrant does not support
     # parallel multi-machine provisioning yet (https://github.com/hashicorp/vagrant/issues/1784)
 
@@ -188,7 +188,21 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       ansible_launch_services.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
       ansible_launch_services.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
       ansible_launch_services.verbose = "false"
-      ansible_launch_services.playbook = 'ansible/playbooks/launch_swarm_services.yml'
+      ansible_launch_services.playbook = 'ansible/playbooks/configure_keepalivedlaunch_swarm_services.yml'
+    end
+
+    # Configure keepalived on haproxys
+    config.vm.provision 'configure_keepalived', type: 'ansible' do |ansible_configure_keepalived|
+      if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
+        ansible_configure_keepalived.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
+      end
+      ansible_configure_keepalived.limit = "all"
+      ansible_configure_keepalived.force_remote_user = false
+      ansible_configure_keepalived.config_file = ANSIBLE_CONFIG_FILE_PATH
+      ansible_configure_keepalived.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
+      ansible_configure_keepalived.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
+      ansible_configure_keepalived.verbose = "false"
+      ansible_configure_keepalived.playbook = 'ansible/playbooks/keepalived_installation.yml'
     end
 
   end
