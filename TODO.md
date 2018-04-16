@@ -6,3 +6,4 @@
 - Make LDAP auth for all apps
 - Add HaProxy in front of swarm cluster
 - use docker secret for certs
+- use docker config for nginx conf
