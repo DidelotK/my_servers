@@ -7,3 +7,5 @@
 - Add HaProxy in front of swarm cluster
 - use docker secret for certs
 - use docker config for nginx conf
+- install Vault to store all secret
+- simplify the installation (one only file with all creds)
