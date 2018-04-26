@@ -21,6 +21,7 @@
       become: yes
       docker_users:
         - "{{ ansible_user }}"
+      docker_reset_ssh: true
       docker_daemon_options:
         hosts:
           - "unix:///var/run/docker.sock"

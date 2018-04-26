@@ -4,8 +4,9 @@
 - Fix https in mycv
 - Install blueOcean on jenkins and configure every plugin on build instead of first time running container
 - Make LDAP auth for all apps
-- Add HaProxy in front of swarm cluster
 - use docker secret for certs
 - use docker config for nginx conf
 - install Vault to store all secret
 - simplify the installation (one only file with all creds)
+- add prometheus for monitoring
+- add possibility to choise the services deployed

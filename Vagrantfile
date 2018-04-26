@@ -10,14 +10,21 @@ VAGRANT_VERSION = '2'
 MANAGER1_IP = '192.168.50.53'
 WORKER1_IP  = '192.168.50.52'
 WORKER2_IP  = '192.168.50.54'
+HAPROXY1_IP  = '192.168.50.61'
+HAPROXY2_IP  = '192.168.50.62'
 
 # Machines configs
-MANAGER1_RAM = 4096
+MANAGER1_RAM = 2048
 MANAGER1_CPU = 2
 WORKER1_RAM  = 4096
 WORKER1_CPU  = 2
 WORKER2_RAM  = 4096
 WORKER2_CPU  = 2
+# Worker for haproxy
+HAPROXY1_RAM  = 1024
+HAPROXY1_CPU  = 2
+HAPROXY2_RAM  = 1024
+HAPROXY2_CPU  = 2
 
 # User configs
 ADMIN_USER                 = 'admin'
@@ -85,13 +92,42 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       v.vmx['memsize'] = WORKER2_RAM
       v.vmx['numvcpus'] = WORKER2_CPU
     end
+  end
 
+  # Define haproxy1 machine
+  config.vm.define 'haproxy1' do |haproxy1|
+    haproxy1.vm.network 'private_network', ip: HAPROXY1_IP, :bridge => '127.0.0.1'
+
+    haproxy1.vm.provider 'virtualbox' do |v|
+      v.memory = HAPROXY1_RAM
+      v.cpus = HAPROXY1_CPU
+    end
+
+    haproxy1.vm.provider 'vmware_fusion' do |v|
+      v.vmx['memsize'] = HAPROXY1_RAM
+      v.vmx['numvcpus'] = HAPROXY1_CPU
+    end
+  end
+
+  # Define haproxy2 machine
+  config.vm.define 'haproxy2' do |haproxy2|
+    haproxy2.vm.network 'private_network', ip: HAPROXY2_IP, :bridge => '127.0.0.1'
+
+    haproxy2.vm.provider 'virtualbox' do |v|
+      v.memory = HAPROXY2_RAM
+      v.cpus = HAPROXY2_CPU
+    end
+
+    haproxy2.vm.provider 'vmware_fusion' do |v|
+      v.vmx['memsize'] = HAPROXY2_RAM
+      v.vmx['numvcpus'] = HAPROXY2_CPU
+    end
 
     ##############################
     #
     #   Ansible provisioning
     #
-    ##############################
+    ##############################configure_keepalived
     # Note: Ansible is started in the last machine because vagrant does not support
     # parallel multi-machine provisioning yet (https://github.com/hashicorp/vagrant/issues/1784)
 
@@ -152,7 +188,21 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       ansible_launch_services.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
       ansible_launch_services.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
       ansible_launch_services.verbose = "false"
-      ansible_launch_services.playbook = 'ansible/playbooks/launch_swarm_services.yml'
+      ansible_launch_services.playbook = 'ansible/playbooks/configure_keepalivedlaunch_swarm_services.yml'
+    end
+
+    # Configure keepalived on haproxys
+    config.vm.provision 'configure_keepalived', type: 'ansible' do |ansible_configure_keepalived|
+      if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
+        ansible_configure_keepalived.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
+      end
+      ansible_configure_keepalived.limit = "all"
+      ansible_configure_keepalived.force_remote_user = false
+      ansible_configure_keepalived.config_file = ANSIBLE_CONFIG_FILE_PATH
+      ansible_configure_keepalived.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
+      ansible_configure_keepalived.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
+      ansible_configure_keepalived.verbose = "false"
+      ansible_configure_keepalived.playbook = 'ansible/playbooks/keepalived_installation.yml'
     end
 
   end
