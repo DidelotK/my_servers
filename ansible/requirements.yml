@@ -10,3 +10,6 @@
 
 - src: https://github.com/DidelotDevops/ansible-keepalived
   name: keepalived
+
+- src: https://github.com/DidelotDevops/ansible-prometheus-configs-generator
+  name: prometheus-configs-generator
