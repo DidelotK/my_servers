@@ -8,6 +8,6 @@
 - use docker config for nginx conf
 - install Vault to store all secret
 - simplify the installation (one only file with all creds)
-- add prometheus for monitoring
+- add prometheus alerts
 - add possibility to choise the services deployed
 - BACKUP SWARM !!! https://docs.docker.com/engine/swarm/admin_guide/#recover-from-disaster
