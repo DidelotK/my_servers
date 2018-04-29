@@ -20,7 +20,7 @@ WORKER1_RAM  = 4096
 WORKER1_CPU  = 2
 WORKER2_RAM  = 4096
 WORKER2_CPU  = 2
-# Worker for haproxy
+# Manager for haproxy
 HAPROXY1_RAM  = 1024
 HAPROXY1_CPU  = 2
 HAPROXY2_RAM  = 1024
@@ -138,7 +138,7 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
         ansible_servers_preconfiguration.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
       end
 
-      ansible_servers_preconfiguration.limit = "all"
+      ansible_servers_preconfiguration.limit = "all,localhost"
       ansible_servers_preconfiguration.force_remote_user = false
       ansible_servers_preconfiguration.config_file = ANSIBLE_CONFIG_FILE_PATH
       ansible_servers_preconfiguration.inventory_path = ANSIBLE_INIT_INVENTORY_PATH
@@ -152,7 +152,7 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
         ansible_docker_installation.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
       end
-      ansible_docker_installation.limit = "all"
+      ansible_docker_installation.limit = "all,localhost"
       ansible_docker_installation.force_remote_user = false
       ansible_docker_installation.config_file = ANSIBLE_CONFIG_FILE_PATH
       ansible_docker_installation.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
@@ -167,7 +167,7 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
         ansible_swarm_configuration.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
       end
-      ansible_swarm_configuration.limit = "all"
+      ansible_swarm_configuration.limit = "all,localhost"
       ansible_swarm_configuration.force_remote_user = false
       ansible_swarm_configuration.config_file = ANSIBLE_CONFIG_FILE_PATH
       ansible_swarm_configuration.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
@@ -182,13 +182,13 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
         ansible_launch_services.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
       end
-      ansible_launch_services.limit = "all"
+      ansible_launch_services.limit = "all,localhost"
       ansible_launch_services.force_remote_user = false
       ansible_launch_services.config_file = ANSIBLE_CONFIG_FILE_PATH
       ansible_launch_services.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
       ansible_launch_services.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
       ansible_launch_services.verbose = "false"
-      ansible_launch_services.playbook = 'ansible/playbooks/configure_keepalivedlaunch_swarm_services.yml'
+      ansible_launch_services.playbook = 'ansible/playbooks/launch_swarm_services.yml'
     end
 
     # Configure keepalived on haproxys
@@ -196,7 +196,7 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
         ansible_configure_keepalived.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
       end
-      ansible_configure_keepalived.limit = "all"
+      ansible_configure_keepalived.limit = "all,localhost"
       ansible_configure_keepalived.force_remote_user = false
       ansible_configure_keepalived.config_file = ANSIBLE_CONFIG_FILE_PATH
       ansible_configure_keepalived.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH

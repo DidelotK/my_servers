@@ -2,6 +2,46 @@
 ########################################
 # Launch services on swarm
 ########################################
+- hosts: localhost
+  connection: local
+  pre_tasks:
+    - set_fact:
+        node_ip: "{{ hostvars[item]['ansible_host'] }}"
+      register: nodes_ips_result
+      with_items: "{{ groups['swarm_nodes'] }}"
+
+    - set_fact:
+        nodes_ips: "{{ nodes_ips_result.results | map(attribute='ansible_facts.node_ip') | list }}"
+  roles:
+    - role: prometheus-configs-generator
+      prometheus_path_to_generated_config: "../../docker/managers/prometheus"
+      prometheus_extra_scrape_configs:
+        - job_name: 'cadvisor'
+          scrape_interval: 5s
+          dns_sd_configs:
+            - names:
+              - 'tasks.cadvisor'
+              type: 'A'
+              port: 8080
+          static_configs:
+            - targets: "{{ nodes_ips | map('regex_replace','(.*)','\\1:8080')| list }}"
+
+        - job_name: 'node-exporter'
+          scrape_interval: 5s
+          dns_sd_configs:
+            - names:
+              - 'tasks.node-exporter'
+              type: 'A'
+              port: 9100
+          static_configs:
+            - targets: "{{ nodes_ips | map('regex_replace','(.*)','\\1:9100')| list }}"
+      prometheus_alerting:
+        alertmanagers:
+          - scheme: http
+            static_configs:
+              - targets:
+                - "alertmanager:9093"
+
 - hosts: haproxys
   remote_user: "{{ admin_user }}"
   tasks:
