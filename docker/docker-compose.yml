@@ -1,20 +1,45 @@
 version: '3.3'
 
 configs:
-  prometheus_configs:
+  prometheus_config:
     file: prometheus/prometheus.yml
 
-  grafana_datasources_configs:
+  grafana_datasources_config:
     file: grafana/provisioning/datasources/all.yml
 
-  grafana_dashboards_configs:
+  grafana_dashboards_config:
     file: grafana/provisioning/dashboards/all.yml
 
-  grafana_dashboard_prometheus_configs:
+  grafana_dashboard_prometheus_config:
     file: grafana/provisioning/dashboards/prometheus-stats_rev1.json
 
-  grafana_dashboard_swarm_configs:
+  grafana_dashboard_swarm_config:
     file: grafana/provisioning/dashboards/docker-swarm-monitor_rev1.json
+
+  nginx_global_config:
+    file: nginx/conf/nginx.conf
+
+  nginx_grafana_config:
+    file: nginx/conf/grafana.conf
+
+  nginx_jenkins_config:
+    file: nginx/conf/jenkins.conf
+
+  nginx_mycv_config:
+    file: nginx/conf/mycv.conf
+
+  nginx_portainer_config:
+    file: nginx/conf/portainer.conf
+
+secrets:
+  docker_tls_cert_ca:
+    file: certs/ca.pem
+
+  docker_tls_cert_cert:
+    file: certs/cert.pem
+
+  docker_tls_cert_key:
+    file: certs/key.pem
 
 volumes:
   jenkins_data:
@@ -54,11 +79,14 @@ services:
         constraints:
           - node.role == manager
           - node.labels.haproxy == true
-    restart: always
 
   jenkinsmaster:
     image: 0.0.0.0:5000/jenkins_master
     build: jenkins-master
+    secrets:
+      - docker_tls_cert_ca
+      - docker_tls_cert_cert
+      - docker_tls_cert_key
     volumes:
       - jenkins_logs:/var/log/jenkins
       - jenkins_data:/var/jenkins_home
@@ -69,12 +97,6 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-
-  jenkinsnodeslave:
-    image: 0.0.0.0:5000/jenkins_node_slave
-    build: jenkins-node-slave
-    deploy:
-      replicas: 0
 
   mycv:
     image: didelotkev/my_cv
@@ -97,7 +119,6 @@ services:
       placement:
         constraints:
           - node.role == manager
-    deploy:
       restart_policy:
         condition: on-failure
 
@@ -105,16 +126,16 @@ services:
   grafana:
     image: grafana/grafana
     configs:
-      - source: grafana_datasources_configs
+      - source: grafana_datasources_config
         target: /etc/grafana/provisioning/datasources/all.yml
 
-      - source: grafana_dashboards_configs
+      - source: grafana_dashboards_config
         target: /etc/grafana/provisioning/dashboards/all.yml
 
-      - source: grafana_dashboard_prometheus_configs
+      - source: grafana_dashboard_prometheus_config
         target: /etc/grafana/provisioning/dashboards/prometheus-stats_rev1.json
 
-      - source: grafana_dashboard_swarm_configs
+      - source: grafana_dashboard_swarm_config
         target: /etc/grafana/provisioning/dashboards/docker-swarm-monitor_rev1.json
 #    volumes:
 #      - grafana_logs:/var/log/grafana
@@ -128,7 +149,7 @@ services:
   prometheus:
     image: prom/prometheus:v2.0.0
     configs:
-      - source: prometheus_configs
+      - source: prometheus_config
         target: /etc/prometheus/prometheus.yml
     volumes:
       - prometheus_data:/prometheus
@@ -178,7 +199,6 @@ services:
       - 8080:8080
     networks:
       - services_network
-    restart: always
     deploy:
       mode: global
       restart_policy:
@@ -189,11 +209,21 @@ services:
     build: nginx
     environment:
       - SERVICE_PORTS=80,443
-    depends_on:
-      - jenkinsmaster
-      - mycv
-      - portainer
-      - grafana
+    configs:
+      - source: nginx_global_config
+        target: /etc/nginx/nginx.conf
+
+      - source: nginx_grafana_config
+        target: /etc/nginx/conf.d/grafana.conf
+
+      - source: nginx_jenkins_config
+        target: /etc/nginx/conf.d/jenkins.conf
+
+      - source: nginx_mycv_config
+        target: /etc/nginx/conf.d/mycv.conf
+
+      - source: nginx_portainer_config
+        target: /etc/nginx/conf.d/portainer.conf
     volumes:
       - nginx_logs:/var/log/nginx
       - nginx_certificates:/etc/letsencrypt

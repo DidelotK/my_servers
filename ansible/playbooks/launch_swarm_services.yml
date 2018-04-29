@@ -14,7 +14,7 @@
         nodes_ips: "{{ nodes_ips_result.results | map(attribute='ansible_facts.node_ip') | list }}"
   roles:
     - role: prometheus-configs-generator
-      prometheus_path_to_generated_config: "../../docker/managers/prometheus"
+      prometheus_path_to_generated_config: "../../docker/prometheus"
       prometheus_extra_scrape_configs:
         - job_name: 'cadvisor'
           scrape_interval: 5s
@@ -44,12 +44,8 @@
 
 - hosts: managers[0]
   remote_user: "{{ admin_user }}"
-  vars:
-    certs_list:
-      - ca.pem
-      - cert.pem
-      - key.pem
   tasks:
+
     - name: Copy docker to remote.
       copy:
         src: ../../docker
@@ -59,17 +55,14 @@
         mode: 0644
         force: yes
 
-    - name: Copy certificates into folders of docker images that will use tcp to connect to host daemon.
+    - name: Copy certs to remote.
       copy:
-        src: "{{ docker_tls_certs_path }}/{{ item.1 }}"
-        dest: "{{ item.0 }}/certs/{{ item.1 }}"
+        src: ../../certs
+        dest: "/home/{{ ansible_user }}/docker"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: 0644
-        remote_src: yes
-      with_nested:
-        - ["/home/{{ ansible_user }}/docker/managers/jenkins-master", "/home/{{ ansible_user }}/docker/managers/jenkins-node-slave"]
-        - "{{ certs_list }}"
+        force: yes
 
     - name: Start swarm services.
       block:
@@ -89,16 +82,16 @@
           when: registry_started.stdout == ""
 
         - name: Build docker stack.
-          shell: docker-compose -f docker-compose.swarm.yml build
+          shell: docker-compose build
           args:
-              chdir: "/home/{{ ansible_user }}/docker/managers"
+              chdir: "/home/{{ ansible_user }}/docker"
 
         - name: Push docker stack.
-          shell: docker-compose -f docker-compose.swarm.yml push
+          shell: docker-compose push
           args:
-              chdir: "/home/{{ ansible_user }}/docker/managers"
+              chdir: "/home/{{ ansible_user }}/docker"
 
         - name: Deploy stack.
-          shell: docker stack deploy -c docker-compose.swarm.yml docker_services
+          shell: docker stack deploy -c docker-compose.yml docker_services
           args:
-              chdir: "/home/{{ ansible_user }}/docker/managers"
+              chdir: "/home/{{ ansible_user }}/docker"

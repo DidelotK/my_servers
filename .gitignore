@@ -18,7 +18,7 @@ ssh-keys/*
 ansible/Makefile
 
 # Generated files
-docker/managers/prometheus/prometheus.yml
+docker/prometheus/prometheus.yml
 
 
 !**/.gitkeep
