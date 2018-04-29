@@ -35,12 +35,6 @@
               port: 9100
           static_configs:
             - targets: "{{ nodes_ips | map('regex_replace','(.*)','\\1:9100')| list }}"
-      prometheus_alerting:
-        alertmanagers:
-          - scheme: http
-            static_configs:
-              - targets:
-                - "alertmanager:9093"
 
 - hosts: haproxys
   remote_user: "{{ admin_user }}"
