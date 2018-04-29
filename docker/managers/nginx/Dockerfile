@@ -8,13 +8,6 @@ MAINTAINER Kevin <work@didelotkev.ovh>
 #    python-certbot-nginx -t stretch-backports \
 #    && rm -rf /var/lib/apt/lists/*
 
-# Add all necessary configurations
-COPY conf/jenkins.conf /etc/nginx/conf.d/jenkins.conf
-COPY conf/mycv.conf /etc/nginx/conf.d/mycv.conf
-COPY conf/portainer.conf /etc/nginx/conf.d/portainer.conf
-COPY conf/grafana.conf /etc/nginx/conf.d/grafana.conf
-COPY conf/nginx.conf /etc/nginx/nginx.conf
-
 # Expose HTTP and HTTPS ports
 EXPOSE 80
 EXPOSE 443
