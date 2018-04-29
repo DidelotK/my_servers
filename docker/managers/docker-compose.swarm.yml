@@ -1,5 +1,37 @@
 version: '3.3'
 
+configs:
+  prometheus_configs:
+    file: prometheus/prometheus.yml
+
+  grafana_datasources_configs:
+    file: grafana/provisioning/datasources/all.yml
+
+  grafana_dashboards_configs:
+    file: grafana/provisioning/dashboards/all.yml
+
+  grafana_dashboard_prometheus_configs:
+    file: grafana/provisioning/dashboards/prometheus-stats_rev1.json
+
+  grafana_dashboard_swarm_configs:
+    file: grafana/provisioning/dashboards/docker-swarm-monitor_rev1.json
+
+volumes:
+  jenkins_data:
+  jenkins_logs:
+  mycv_logs:
+  portainer_data:
+  grafana_logs:
+  grafana_data:
+  prometheus_data:
+  mycv:
+  nginx_logs:
+  nginx_certificates:
+
+networks:
+  services_network:
+    driver: overlay
+
 services:
   haproxy:
     image: dockercloud/haproxy
@@ -14,6 +46,8 @@ services:
       - services_network
     deploy:
       replicas: 2
+      restart_policy:
+        condition: on-failure
       placement:
         preferences:
           - spread: node.labels.haproxy
@@ -32,7 +66,9 @@ services:
       - '50000:50000'
     networks:
       - services_network
-    restart: always
+    deploy:
+      restart_policy:
+        condition: on-failure
 
   jenkinsnodeslave:
     image: 0.0.0.0:5000/jenkins_node_slave
@@ -46,7 +82,9 @@ services:
       - mycv_logs:/var/log/nginx
     networks:
       - services_network
-    restart: always
+    deploy:
+      restart_policy:
+        condition: on-failure
 
   portainer:
     image: portainer/portainer
@@ -59,17 +97,92 @@ services:
       placement:
         constraints:
           - node.role == manager
-    restart: always
+    deploy:
+      restart_policy:
+        condition: on-failure
 
+# MONITORING
   grafana:
     image: grafana/grafana
+    configs:
+      - source: grafana_datasources_configs
+        target: /etc/grafana/provisioning/datasources/all.yml
+
+      - source: grafana_dashboards_configs
+        target: /etc/grafana/provisioning/dashboards/all.yml
+
+      - source: grafana_dashboard_prometheus_configs
+        target: /etc/grafana/provisioning/dashboards/prometheus-stats_rev1.json
+
+      - source: grafana_dashboard_swarm_configs
+        target: /etc/grafana/provisioning/dashboards/docker-swarm-monitor_rev1.json
+#    volumes:
+#      - grafana_logs:/var/log/grafana
+#      - grafana_data:/var/lib/grafana
+    networks:
+      - services_network
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  prometheus:
+    image: prom/prometheus:v2.0.0
+    configs:
+      - source: prometheus_configs
+        target: /etc/prometheus/prometheus.yml
     volumes:
-      - grafana_configs:/etc/grafana
-      - grafana_logs:/var/log/grafana
-      - grafana_data:/var/lib/grafana
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - 9090:9090
+    depends_on:
+      - cadvisor
+    networks:
+      - services_network
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  node-exporter:
+    image: prom/node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    ports:
+      - 9100:9100
+    networks:
+      - services_network
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+
+  cadvisor:
+    image: google/cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - 8080:8080
     networks:
       - services_network
     restart: always
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
 
   nginx:
     image: 0.0.0.0:5000/nginx_proxy
@@ -91,20 +204,6 @@ services:
       - mycv
       - portainer
       - grafana
-    restart: always
-
-volumes:
-  jenkins_data:
-  jenkins_logs:
-  mycv_logs:
-  portainer_data:
-  grafana_configs:
-  grafana_logs:
-  grafana_data:
-  mycv:
-  nginx_logs:
-  nginx_certificates:
-
-networks:
-  services_network:
-    driver: overlay
+    deploy:
+      restart_policy:
+        condition: on-failure

@@ -10,3 +10,4 @@
 - simplify the installation (one only file with all creds)
 - add prometheus for monitoring
 - add possibility to choise the services deployed
+- BACKUP SWARM !!! https://docs.docker.com/engine/swarm/admin_guide/#recover-from-disaster
