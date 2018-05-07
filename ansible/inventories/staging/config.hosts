@@ -1,8 +1,8 @@
-manager1 ansible_ssh_user=admin ansible_user=admin ansible_become_user=root ansible_host=192.168.50.53 ansible_port=22 ansible_ssh_private_key_file=./ssh-keys/admin_id_rsa
-worker1  ansible_ssh_user=admin ansible_user=admin ansible_become_user=root ansible_host=192.168.50.52 ansible_port=22 ansible_ssh_private_key_file=./ssh-keys/admin_id_rsa
-worker2  ansible_ssh_user=admin ansible_user=admin ansible_become_user=root ansible_host=192.168.50.54 ansible_port=22 ansible_ssh_private_key_file=./ssh-keys/admin_id_rsa
-haproxy1  ansible_ssh_user=admin ansible_user=admin ansible_become_user=root ansible_host=192.168.50.61 ansible_port=22 ansible_ssh_private_key_file=./ssh-keys/admin_id_rsa
-haproxy2  ansible_ssh_user=admin ansible_user=admin ansible_become_user=root ansible_host=192.168.50.62 ansible_port=22 ansible_ssh_private_key_file=./ssh-keys/admin_id_rsa
+manager1 ansible_ssh_user=kdidelot ansible_user=kdidelot ansible_become_user=root ansible_host=192.168.50.53 ansible_port=22 ansible_ssh_private_key_file=./ssh-keys/admin_id_rsa
+worker1  ansible_ssh_user=kdidelot ansible_user=kdidelot ansible_become_user=root ansible_host=192.168.50.52 ansible_port=22 ansible_ssh_private_key_file=./ssh-keys/admin_id_rsa
+worker2  ansible_ssh_user=kdidelot ansible_user=kdidelot ansible_become_user=root ansible_host=192.168.50.54 ansible_port=22 ansible_ssh_private_key_file=./ssh-keys/admin_id_rsa
+haproxy1  ansible_ssh_user=kdidelot ansible_user=kdidelot ansible_become_user=root ansible_host=192.168.50.61 ansible_port=22 ansible_ssh_private_key_file=./ssh-keys/admin_id_rsa
+haproxy2  ansible_ssh_user=kdidelot ansible_user=kdidelot ansible_become_user=root ansible_host=192.168.50.62 ansible_port=22 ansible_ssh_private_key_file=./ssh-keys/admin_id_rsa
 
 [haproxys]
 haproxy1
