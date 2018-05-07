@@ -39,12 +39,35 @@
 - hosts: haproxys
   remote_user: "{{ admin_user }}"
   tasks:
+    - name: Check if haproxy node has already the tag
+      shell: |
+        docker node inspect {{ inventory_hostname }} \
+          -f {% raw %}'{{ range $k, $v := .Spec.Labels }}{{ $k }}={{ $v }} {{end}}{% endraw %}'
+      changed_when: false
+      register: haproxy_tags
+
     - name: Tag haproxy in docker swarm.
-      shell: "docker node update --label-add haproxy=true {{ ansible_hostname }}"
+      command: "docker node update --label-add haproxy=true {{ ansible_hostname }}"
+      when: "'haproxy' not in haproxy_tags.stdout"
 
 - hosts: managers[0]
   remote_user: "{{ admin_user }}"
   tasks:
+    - name: Create all credentials secrets
+      shell: "printf '{{ item.value }}' | docker secret create {{ item.name }} -"
+      no_log: true
+      register: create_secret_result
+      failed_when: create_secret_result.stderr != '' and 'AlreadyExists' not in create_secret_result.stderr
+      changed_when: create_secret_result.stdout != ''
+      with_items:
+        - name: JENKINS_USER
+          value: "{{ jenkins_user }}"
+        - name: JENKINS_PASSWORD
+          value: "{{ jenkins_password }}"
+        - name: GRAFANA_USER
+          value: "{{ grafana_user }}"
+        - name: GRAFANA_PASSWORD
+          value: "{{ grafana_password }}"
 
     - name: Copy docker to remote.
       copy:
@@ -64,34 +87,63 @@
         mode: 0644
         force: yes
 
-    - name: Start swarm services.
-      block:
-        - name: Check if the registry service is already started
-          shell: "docker service ls | grep registry"
-          ignore_errors: yes
-          changed_when: false
-          register: registry_started
+    - name: Check if the registry service is already started
+      shell: "docker service ls | grep registry"
+      ignore_errors: yes
+      failed_when: false
+      changed_when: false
+      register: registry_started
 
-        - name: Start the registry as a service
-          command: |
-            docker service create \
-              --name registry \
-              -p 5000:5000  \
-              -p 5000:5000/udp  \
-              registry:2
-          when: registry_started.stdout == ""
+    - name: Start the registry as a service
+      command: |
+        docker service create \
+          --name registry \
+          -p 5000:5000  \
+          -p 5000:5000/udp  \
+          registry:2
+      when: registry_started.stdout == ""
 
-        - name: Build docker stack.
-          shell: docker-compose build
-          args:
-              chdir: "/home/{{ ansible_user }}/docker"
+    - name: Build docker stack.
+      command: docker-compose build
+      args:
+          chdir: "/home/{{ ansible_user }}/docker"
+    - name: Push docker stack.
+      command: docker-compose push
+      args:
+          chdir: "/home/{{ ansible_user }}/docker"
+    - name: Deploy stack.
+      command: docker stack deploy -c docker-compose.yml docker_services
+      args:
+          chdir: "/home/{{ ansible_user }}/docker"
 
-        - name: Push docker stack.
-          shell: docker-compose push
-          args:
-              chdir: "/home/{{ ansible_user }}/docker"
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Wait for portainer service to be deployed.
+      uri:
+        url: http://portainer.didelotkev.ovh/api/status
+        method: GET
+        headers:
+          Content-Type: "application/json"
+      register: wait_for_portainer
+      until: wait_for_portainer.status == 200
+      retries: 10
+      delay: 5
+      changed_when: false
 
-        - name: Deploy stack.
-          shell: docker stack deploy -c docker-compose.yml docker_services
-          args:
-              chdir: "/home/{{ ansible_user }}/docker"
+    - name: Configure portainer admin user.
+      uri:
+        url: http://portainer.didelotkev.ovh/api/users/admin/init
+        method: POST
+        body:
+          Username: "{{ portainer_user }}"
+          Password: "{{ portainer_password }}"
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+          accept: "application/json"
+      register: configure_portainer_admin_user_result
+      changed_when: configure_portainer_admin_user_result.status == 200
+      failed_when: configure_portainer_admin_user_result.status != 409 and configure_portainer_admin_user_result.status != 200
+
+...

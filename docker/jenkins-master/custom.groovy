@@ -1,4 +1,5 @@
 #!groovy
+import java.io.FileNotFoundException
 import hudson.security.*
 import hudson.security.csrf.DefaultCrumbIssuer
 import jenkins.model.*
@@ -9,8 +10,19 @@ def jenkinsInstance = Jenkins.getInstance()
 def hudsonRealm = new HudsonPrivateSecurityRealm(false)
 def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
 def users = hudsonRealm.getAllUsers()
-def admin_username = "admin"
-def admin_password = "admin"
+
+String admin_username
+String admin_password
+try {
+    String admin_username_secret = new File('/run/secrets/JENKINS_USER').getText('UTF-8')
+    String admin_password_secret = new File('/run/secrets/JENKINS_PASSWORD').getText('UTF-8')
+
+    admin_username = admin_username_secret
+    admin_password = admin_password_secret
+} catch(FileNotFoundException e) {
+    admin_username = "admin"
+    admin_password = "password"
+}
 
 // Disable remoting
 jenkinsInstance.getDescriptor("jenkins.CLI").get().setEnabled(false)

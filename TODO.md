@@ -5,7 +5,6 @@
 - Install blueOcean on jenkins and configure every plugin on build instead of first time running container
 - Make LDAP auth for all apps
 - install Vault to store all secret
-- simplify the installation (one only file with all creds)
 - add prometheus alerts
 - add possibility to choise the services deployed
 - BACKUP SWARM !!! https://docs.docker.com/engine/swarm/admin_guide/#recover-from-disaster

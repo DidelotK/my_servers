@@ -26,9 +26,10 @@ HAPROXY1_CPU  = 2
 HAPROXY2_RAM  = 1024
 HAPROXY2_CPU  = 2
 
-# User configs
-ADMIN_USER                 = 'admin'
+# Credentials configs
+ADMIN_USER                 = 'kdidelot'
 ADMIN_PATH_SSH_KEY_PRIVATE = 'ssh-keys/admin_id_rsa'
+CREDENTIALS_FILE_PATH      = './credentials.yml'
 
 # Ansible configs
 ANSIBLE_COMPATIBILITY_MODE  = '2.0'
@@ -127,10 +128,21 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
     #
     #   Ansible provisioning
     #
-    ##############################configure_keepalived
+    ##############################
     # Note: Ansible is started in the last machine because vagrant does not support
     # parallel multi-machine provisioning yet (https://github.com/hashicorp/vagrant/issues/1784)
 
+    # Pre-configure the machines
+    config.vm.provision 'local_requirements', type: 'ansible' do |ansible_local_requirements|
+      ansible_local_requirements.limit = 'all,localhost'
+      ansible_local_requirements.force_remote_user = false
+      ansible_local_requirements.extra_vars = CREDENTIALS_FILE_PATH
+      ansible_local_requirements.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
+      ansible_local_requirements.inventory_path = ANSIBLE_INIT_INVENTORY_PATH
+      ansible_local_requirements.config_file = ANSIBLE_CONFIG_FILE_PATH
+      ansible_local_requirements.verbose = 'false'
+      ansible_local_requirements.playbook = 'ansible/playbooks/local_requirements.yml'
+    end
 
     # Pre-configure the machines
     config.vm.provision 'servers_preconfiguration', type: 'ansible' do |ansible_servers_preconfiguration|
@@ -138,12 +150,13 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
         ansible_servers_preconfiguration.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
       end
 
-      ansible_servers_preconfiguration.limit = "all,localhost"
+      ansible_servers_preconfiguration.limit = 'all,localhost'
       ansible_servers_preconfiguration.force_remote_user = false
+      ansible_servers_preconfiguration.extra_vars = CREDENTIALS_FILE_PATH
       ansible_servers_preconfiguration.config_file = ANSIBLE_CONFIG_FILE_PATH
       ansible_servers_preconfiguration.inventory_path = ANSIBLE_INIT_INVENTORY_PATH
       ansible_servers_preconfiguration.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
-      ansible_servers_preconfiguration.verbose = "false"
+      ansible_servers_preconfiguration.verbose = 'v'
       ansible_servers_preconfiguration.playbook = 'ansible/playbooks/servers_preconfiguration.yml'
     end
 
@@ -152,12 +165,13 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
         ansible_docker_installation.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
       end
-      ansible_docker_installation.limit = "all,localhost"
+      ansible_docker_installation.limit = 'all,localhost'
       ansible_docker_installation.force_remote_user = false
+      ansible_docker_installation.extra_vars = CREDENTIALS_FILE_PATH
       ansible_docker_installation.config_file = ANSIBLE_CONFIG_FILE_PATH
       ansible_docker_installation.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
       ansible_docker_installation.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
-      ansible_docker_installation.verbose = "false"
+      ansible_docker_installation.verbose = 'false'
       # ansible_docker_installation.tags = 'docker_services'
       ansible_docker_installation.playbook = 'ansible/playbooks/docker_installation.yml'
     end
@@ -167,12 +181,13 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
         ansible_swarm_configuration.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
       end
-      ansible_swarm_configuration.limit = "all,localhost"
+      ansible_swarm_configuration.limit = 'all,localhost'
       ansible_swarm_configuration.force_remote_user = false
+      ansible_swarm_configuration.extra_vars = CREDENTIALS_FILE_PATH
       ansible_swarm_configuration.config_file = ANSIBLE_CONFIG_FILE_PATH
       ansible_swarm_configuration.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
       ansible_swarm_configuration.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
-      ansible_swarm_configuration.verbose = "false"
+      ansible_swarm_configuration.verbose = 'false'
       # ansible_swarm_configuration.tags = 'docker_services'
       ansible_swarm_configuration.playbook = 'ansible/playbooks/swarm_configuration.yml'
     end
@@ -182,12 +197,13 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
         ansible_launch_services.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
       end
-      ansible_launch_services.limit = "all,localhost"
+      ansible_launch_services.limit = 'all,localhost'
       ansible_launch_services.force_remote_user = false
+      ansible_launch_services.extra_vars = CREDENTIALS_FILE_PATH
       ansible_launch_services.config_file = ANSIBLE_CONFIG_FILE_PATH
       ansible_launch_services.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
       ansible_launch_services.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
-      ansible_launch_services.verbose = "false"
+      ansible_launch_services.verbose = 'false'
       ansible_launch_services.playbook = 'ansible/playbooks/launch_swarm_services.yml'
     end
 
@@ -196,12 +212,13 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       if File.exist?(ANSIBLE_VAULT_PASSWORD_PATH)
         ansible_configure_keepalived.vault_password_file = ANSIBLE_VAULT_PASSWORD_PATH
       end
-      ansible_configure_keepalived.limit = "all,localhost"
+      ansible_configure_keepalived.limit = 'all,localhost'
       ansible_configure_keepalived.force_remote_user = false
+      ansible_configure_keepalived.extra_vars = CREDENTIALS_FILE_PATH
       ansible_configure_keepalived.config_file = ANSIBLE_CONFIG_FILE_PATH
       ansible_configure_keepalived.inventory_path = ANSIBLE_CONFIG_INVENTORY_PATH
       ansible_configure_keepalived.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
-      ansible_configure_keepalived.verbose = "false"
+      ansible_configure_keepalived.verbose = 'false'
       ansible_configure_keepalived.playbook = 'ansible/playbooks/keepalived_installation.yml'
     end
 

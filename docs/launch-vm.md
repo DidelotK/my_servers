@@ -1,17 +1,6 @@
-# Launch test VM
+# Launch cluster test
 
-Run this command to create the machines vms and launch provisioning.
+Run this command to create the cluster and launch the provisioning.
 ```bash
 vagrant up --provision
 ```
-
-<b>Default credentials:</b> 
-    
-    Jenkins:  
-    user: admin
-    password: admin
-    
-    
-    Portainer:
-    user: admin
-    password: password

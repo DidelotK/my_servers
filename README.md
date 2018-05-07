@@ -6,45 +6,48 @@
 </p>
 
 ## Summary
-- [I/ Production](#production)
-- [II/ Tests with vagrant](#tests)
-- [III/ More Information about the configurations](#more-info)
+- [I/ Presentation of the deployment](#presentation)
+- [II/ Deploy on production](#production)
+- [III/ Tests with vagrant](#tests)
 - [IV/ Future evolutions](#todos)
 
+<a name="presentation"></a>
+## I/ Presentation of the deployment
+
+TODOOOOOOOOOOOOO
+
+
 <a name="production"></a>
-## I/ Production
-- [1) Install Ansible](https://www.ansible.com/)
-- [2) Install ssh server on servers (if necessary)](docs/install-ssh.md)
-- [3) Encrypt admin password](docs/encrypt-admin-password.md)
-- [4) Specify docker daemon certificate passphrase](docs/docker-daemon-certificate.md)
-- [5) (Optional) Create vault variable](docs/ansible-vault.md)
-- [6) Create needed ssh keys](docs/ssh-keys.md)
-- [7) Update Ansible inventory](docs/update-ansible-inventory.md)
-- [8) Install Ansible required roles](docs/install-ansible-required-roles.md)
-- [9) Run docker swarm services with Ansible](docs/run-swarm-services-with-ansible.md)
+## II/ Deploy on production
+
+### Prerequisites
+- [Ansible](https://www.ansible.com/)
+- [Machines accessible via ssh](docs/install-ssh.md)
+
+### Before provisioning
+- [1) Create your credential file](docs/my-credentials.md)
+- [2) Update Ansible inventory](docs/update-ansible-inventory.md)
+
+### Launch provisioning
+- [Launch provisioning with Ansible](docs/run-swarm-services-with-ansible.md)
 
 <a name="tests"></a>
-## II/ Tests with vagrant
-- [1) Install Virtualbox](https://www.virtualbox.org/)
-- [2) Install Vagrant](https://www.vagrantup.com/)
-- [3) Install Ansible](https://www.ansible.com/)
-- [4) Configure DNS](docs/dns-configuration.md)
-- [5) Encrypt admin password](docs/encrypt-admin-password.md)
-- [6) Specify docker daemon certificate passphrase](docs/docker-daemon-certificate.md)
-- [7) (Optional) Create vault variable](docs/ansible-vault.md)
-- [8) Create needed ssh keys](docs/ssh-keys.md)
-- [9) Install Ansible required roles](docs/install-ansible-required-roles.md)
-- [10) Launch test VM](docs/launch-vm.md)
+## III/ Tests with vagrant
+
+### Prerequisites
+- [Virtualbox](https://www.virtualbox.org/)
+- [Vagrant](https://www.vagrantup.com/)
+- [Ansible](https://www.ansible.com/)
+
+### Before test
+- [1) Create your credential file](docs/my-credentials.md)
+- [2) Configure DNS](docs/dns-configuration.md)
+
+### Launch test
+[Launch test with vagrant](docs/launch-vm.md)
  
 <b>Notes:</b>
-- Your computer needs to have at least 12Go ram
-
-<a name="more-info"></a>
-## III/ More Information about the configurations
-
-All the servers use docker for virtualization, this makes possible to subsequently migrate more easily to other solutions.
-
-Follow this [link](docs/setup-jenkins.md) for more information about deployed containers
+- Your computer needs at least 16Go ram
 
 <a name="todos"></a>
 ## IV/ Future evolutions
