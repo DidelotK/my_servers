@@ -1,5 +1,6 @@
 default_user: ubuntu
 path_to_ssh_keys: ../ssh-keys
-path_to_ssh_admin_public_keys: "{{ path_to_ssh_keys }}/admin_id_rsa.pub"
-path_to_ssh_webapp_public_keys: "{{ path_to_ssh_keys }}/webapp_id_rsa.pub"
-path_to_ssh_webapp_private_keys: "{{ path_to_ssh_keys }}/webapp_id_rsa"
+admin_ssh_key_name: admin_id_rsa
+jenkins_ssh_key_name: jenkins_id_rsa
+path_to_ssh_admin_public_keys: "{{ path_to_ssh_keys }}/{{ admin_ssh_key_name }}.pub"
+path_to_ssh_jenkins_public_keys: "{{ path_to_ssh_keys }}/{{ jenkins_ssh_key_name }}.pub"
