@@ -1,45 +1,42 @@
-version: '3.3'
+version: '3.6'
 
 configs:
   prometheus_config:
     file: prometheus/prometheus.yml
-
   grafana_datasources_config:
     file: grafana/provisioning/datasources/all.yml
-
   grafana_dashboards_config:
     file: grafana/provisioning/dashboards/all.yml
-
   grafana_dashboard_prometheus_config:
     file: grafana/provisioning/dashboards/prometheus-stats_rev1.json
-
   grafana_dashboard_swarm_config:
     file: grafana/provisioning/dashboards/docker-swarm-monitor_rev1.json
-
   nginx_global_config:
     file: nginx/conf/nginx.conf
-
   nginx_grafana_config:
     file: nginx/conf/grafana.conf
-
   nginx_jenkins_config:
     file: nginx/conf/jenkins.conf
-
   nginx_mycv_config:
     file: nginx/conf/mycv.conf
-
   nginx_portainer_config:
     file: nginx/conf/portainer.conf
 
 secrets:
   docker_tls_cert_ca:
     file: certs/ca.pem
-
   docker_tls_cert_cert:
     file: certs/cert.pem
-
   docker_tls_cert_key:
     file: certs/key.pem
+  GRAFANA_USER:
+    external: true
+  GRAFANA_PASSWORD:
+    external: true
+  JENKINS_USER:
+    external: true
+  JENKINS_PASSWORD:
+    external: true
 
 volumes:
   jenkins_data:
@@ -90,8 +87,9 @@ services:
     volumes:
       - jenkins_logs:/var/log/jenkins
       - jenkins_data:/var/jenkins_home
-    ports:
-      - '50000:50000'
+    secrets:
+      - JENKINS_USER
+      - JENKINS_PASSWORD
     networks:
       - services_network
     deploy:
@@ -110,6 +108,8 @@ services:
 
   portainer:
     image: portainer/portainer
+    command:
+      - '--host=unix:///var/run/docker.sock'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
@@ -124,7 +124,8 @@ services:
 
 # MONITORING
   grafana:
-    image: grafana/grafana
+    image: 0.0.0.0:5000/grafana
+    build: grafana
     configs:
       - source: grafana_datasources_config
         target: /etc/grafana/provisioning/datasources/all.yml
@@ -137,6 +138,9 @@ services:
 
       - source: grafana_dashboard_swarm_config
         target: /etc/grafana/provisioning/dashboards/docker-swarm-monitor_rev1.json
+    secrets:
+      - GRAFANA_USER
+      - GRAFANA_PASSWORD
 #    volumes:
 #      - grafana_logs:/var/log/grafana
 #      - grafana_data:/var/lib/grafana

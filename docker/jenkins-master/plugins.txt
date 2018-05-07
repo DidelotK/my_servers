@@ -1,4 +1,4 @@
 ssh-slaves
 token-macro
 durable-task
-docker-plugin:0.16.2
+docker-plugin

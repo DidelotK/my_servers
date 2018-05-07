@@ -1,6 +1,7 @@
 ---
 ########################################
 # Docker Swarm configuration
+# Inspired from: https://thisendout.com/2016/09/13/deploying-docker-swarm-with-ansible/
 ########################################
 - hosts: managers
   remote_user: "{{ admin_user }}"
@@ -97,3 +98,5 @@
 
 # Avoid that containers are running on managers, in order to prevent resource overload (CPU, RAM, fds)
 # docker node update --availability drain manager1
+
+...

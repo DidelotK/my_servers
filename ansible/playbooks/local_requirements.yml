@@ -1,0 +1,42 @@
+---
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Install ansible requirements.
+      command: ansible-galaxy install -p ./roles -r requirements.yml
+      args:
+        chdir: ..
+      register: install_ansible_requirements_result
+      changed_when: '"was installed successfully" in install_ansible_requirements_result.stdout'
+
+    - name: Encode admin password.
+      command: openssl passwd -salt '{{ admin_password_salt }}' -1 '{{ admin_password }}'
+      register: admin_password_encoded_result
+      changed_when: false
+
+    - name: Add encoded password into credentials config file.
+      lineinfile:
+        path: ../../credentials.yml
+        insertafter: 'admin_password:'
+        regexp: '^admin_password_encoded:'
+        line: 'admin_password_encoded: {{ admin_password_encoded_result.stdout }}'
+
+    - name: Check if admin ssh key exist.
+      stat:
+        path: "{{ path_to_ssh_admin_public_keys }}"
+      register: admin_ssh_key_test
+
+    - name: Create the admin ssh key if it doesnt already exist.
+      command: ssh-keygen -f {{ path_to_ssh_keys }}/{{ admin_ssh_key_name }} -t rsa -b 4096 -N '{{ admin_ssh_key_passphrase }}'
+      when: admin_ssh_key_test.stat.exists == False
+
+    - name: Check if jenkins ssh key exist.
+      stat:
+        path: "{{ path_to_ssh_jenkins_public_keys }}"
+      register: jenkins_ssh_key_test
+
+    - name: Create the jenkins ssh key if it doesnt already exist.
+      command: ssh-keygen -f {{ path_to_ssh_keys }}/{{ jenkins_ssh_key_name }} -t rsa -b 4096 -N '{{ jenkins_ssh_key_passphrase }}'
+      when: jenkins_ssh_key_test.stat.exists == False
+
+...

@@ -1,7 +1,6 @@
 ---
 ########################################
 # Docker nodes configuration
-# Inspired from: https://thisendout.com/2016/09/13/deploying-docker-swarm-with-ansible/
 ########################################
 - hosts: swarm_nodes
   remote_user: "{{ admin_user }}"
@@ -22,6 +21,7 @@
       docker_users:
         - "{{ ansible_user }}"
       docker_reset_ssh: true
+      docker_install_compose: false
       docker_daemon_options:
         hosts:
           - "unix:///var/run/docker.sock"
@@ -39,3 +39,5 @@
       pip:
         name: docker-compose
         state: present
+
+...
