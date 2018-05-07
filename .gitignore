@@ -7,8 +7,8 @@
 
 # Sensitive data
 .vault_password
-.credentials
 ssh-keys/*
+certs/*
 **/*.sensitive.yml
 
 # Ansible
@@ -20,5 +20,7 @@ ansible/Makefile
 # Generated files
 docker/prometheus/prometheus.yml
 
+# Personal configs
+credentials.yml
 
 !**/.gitkeep
