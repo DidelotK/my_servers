@@ -5,6 +5,7 @@
        width="500"
        alt="My servers architecture"/>
 </p>
+<a name="figure 1">Figure 1: Global representation</a>
 
 ## Summary
 - [I/ Presentation of the project](#presentation)
@@ -52,6 +53,7 @@ Here is the current application architecture of the cluster that I organized to 
   <img src="docs/img/app_arch.png"
   alt="app arch"/>
 </p>
+<a name="figure 2">Figure 2: Applicative representation</a>
 
 Every brick is a service answered in the cluster. Certain managers of the cluster are tagged has haproxies. 
 These haproxies possess a VIP attributed thanks to Keepalived (which at the moment is hard settled on machines. 
@@ -67,14 +69,58 @@ Here is a network more directed networks to understand better the functioning ex
   <img src="docs/img/network_arch.png"
   alt="network arch"/>
 </p>
+<a name="figure 3">Figure 3: Network representation</a>
 
 ### Spread services
 
-TODO
+The services spread on the cluster are organized in the form of stack Swarm.
+Every stack contains a very precise function. At the moment here are stacks available on the cluster:
+
+#### Ingress stack
+
+This stack is one of the most important of the infrastructure, indeed it is this stack which is going to manage the 
+taken out entrances to the cluster (it is represented on the figure 3).
+
+#### Monitoring stack
+
+This stack consists of Grafana, Prometheus, nodeExporter, caAdvisor allows to visualize in real time the state of the cluster on dashboards. 
+It also allows to set up alerts which can be exploited in case of breakdown.
+
+#### Continuous integration stack
+
+This stack is still in the course of improvement, at the moment it consists of Jenkins. 
+In the future tools as stackstorm or rundeck will maybe come to be transplanted in order to make job when grafana will create alerts.
+
+#### Applicatives stacks
+
+This stacks will be stacks created by the continuos integration stack, they will be consisted of web/bdd or just application 
+of the tests which I would like to realize.
 
 ### Used tools for deployment
 
-TODO
+For the deployment of all this infrastructure, I chose the following tools:
+
+#### Vagrant
+
+Vagrant is a tool of HashiCorp which allows to speak to hypersights to fund among others of the vm. 
+It is very useful to make tests before sending them to production.
+
+#### Packer
+
+Packer is another tool of HashiCorp which allows to generate in the air images under the wished format.
+I use personally Packer to re-package the images of my servers, with the ssh well configured and the repos up to date.
+
+#### Ansible
+
+Ansible is a tool which allows among others to fund and to configure the servers of an idempotente way.
+
+#### Terraform
+
+Terraform is also a HashiCorp tool, he allows to make infra as a code and thus to fund a complete infrastructure 
+thanks to declarative files.
+
+<b>Note: </b> Ansible in the last versions (in particular since 2.5) Allow to make a big quantity of thing that Terraform make.
+However Terraform is more complete tool for this kind of problem (IAAC)
 
 <a name="production"></a>
 ## II/ Deploy on production
