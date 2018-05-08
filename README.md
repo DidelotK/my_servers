@@ -2,7 +2,8 @@
 
 <p align="center">
   <img src="docs/img/my_servers.png"
-  alt="My servers architecture"/>
+       width="500"
+       alt="My servers architecture"/>
 </p>
 
 ## Summary
