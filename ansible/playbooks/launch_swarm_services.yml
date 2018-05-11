@@ -53,7 +53,12 @@
 - hosts: managers[0]
   remote_user: "{{ admin_user }}"
   tasks:
-    - name: Create all credentials secrets
+    - name: Create the ingress network
+      docker_network:
+        name: ingress_network
+        driver: overlay
+
+    - name: Create all needed credentials secrets.
       shell: "printf '{{ item.value }}' | docker secret create {{ item.name }} -"
       no_log: true
       register: create_secret_result
@@ -103,25 +108,19 @@
           registry:2
       when: registry_started.stdout == ""
 
-    - name: Build docker stack.
-      command: docker-compose build
-      args:
-          chdir: "/home/{{ ansible_user }}/docker"
-    - name: Push docker stack.
-      command: docker-compose push
-      args:
-          chdir: "/home/{{ ansible_user }}/docker"
-    - name: Deploy stack.
-      command: docker stack deploy -c docker-compose.yml docker_services
-      args:
-          chdir: "/home/{{ ansible_user }}/docker"
+    - include_tasks: tasks/swarm_deploy_stack.yml
+      loop:
+        - ingress
+        - management
+        - monitoring
+        - ci
+        - mycv
+      loop_control:
+        loop_var: stack
 
-- hosts: localhost
-  connection: local
-  tasks:
     - name: Wait for portainer service to be deployed.
       uri:
-        url: http://portainer.didelotkev.ovh/api/status
+        url: http://0.0.0.0:9000/api/status
         method: GET
         headers:
           Content-Type: "application/json"
@@ -133,7 +132,7 @@
 
     - name: Configure portainer admin user.
       uri:
-        url: http://portainer.didelotkev.ovh/api/users/admin/init
+        url: http://0.0.0.0:9000/api/users/admin/init
         method: POST
         body:
           Username: "{{ portainer_user }}"
@@ -145,5 +144,4 @@
       register: configure_portainer_admin_user_result
       changed_when: configure_portainer_admin_user_result.status == 200
       failed_when: configure_portainer_admin_user_result.status != 409 and configure_portainer_admin_user_result.status != 200
-
 ...
