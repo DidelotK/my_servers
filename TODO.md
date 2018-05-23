@@ -1,10 +1,10 @@
 # TODO
 - Improve/correct documentation
 - Create server packer image
-- Fix https in mycv
 - Install blueOcean on jenkins and configure every plugin on build instead of first time running container
 - Make LDAP auth for all apps
 - install Vault to store all secret
+- Make https
 - add prometheus alerts
 - BACKUP SWARM !!! https://docs.docker.com/engine/swarm/admin_guide/#recover-from-disaster
 - Improve indempotence (not indempotent during deploy stack)
