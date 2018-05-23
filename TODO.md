@@ -1,6 +1,7 @@
 # TODO
 - Improve/correct documentation
 - Create server packer image
+- Create terraform template in order to deploy to aws
 - Install blueOcean on jenkins and configure every plugin on build instead of first time running container
 - Make LDAP auth for all apps
 - install Vault to store all secret
