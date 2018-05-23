@@ -1,0 +1,37 @@
+version: '3.6'
+
+secrets:
+  JENKINS_USER:
+    external: true
+  JENKINS_PASSWORD:
+    external: true
+
+volumes:
+  jenkins_data:
+  jenkins_logs:
+
+networks:
+  ingress_network:
+    external: true
+
+services:
+  jenkinsmaster:
+    image: 0.0.0.0:5000/jenkins_master
+    build: jenkins-master
+    secrets:
+      - docker_tls_cert_ca
+      - docker_tls_cert_cert
+      - docker_tls_cert_key
+    volumes:
+      - jenkins_logs:/var/log/jenkins
+      - jenkins_data:/var/jenkins_home
+    secrets:
+      - JENKINS_USER
+      - JENKINS_PASSWORD
+    ports:
+      - 4000:8080
+    networks:
+      - ingress_network
+    deploy:
+      restart_policy:
+        condition: on-failure

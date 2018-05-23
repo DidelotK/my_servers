@@ -1,0 +1,12 @@
+- name: Build docker stack.
+  command: docker-compose -f docker-compose.{{ stack }}.yml build
+  args:
+      chdir: "/home/{{ ansible_user }}/docker"
+- name: Push docker stack.
+  command: docker-compose -f docker-compose.{{ stack }}.yml push
+  args:
+      chdir: "/home/{{ ansible_user }}/docker"
+- name: Deploy stack.
+  command: docker stack deploy -c docker-compose.{{ stack }}.yml {{ stack }}
+  args:
+      chdir: "/home/{{ ansible_user }}/docker"

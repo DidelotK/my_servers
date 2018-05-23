@@ -1,0 +1,52 @@
+version: '3.6'
+
+configs:
+  nginx_global_config:
+    file: nginx/conf/nginx.conf
+  nginx_grafana_config:
+    file: nginx/conf/grafana.conf
+  nginx_jenkins_config:
+    file: nginx/conf/jenkins.conf
+  nginx_mycv_config:
+    file: nginx/conf/mycv.conf
+  nginx_portainer_config:
+    file: nginx/conf/portainer.conf
+
+volumes:
+  nginx_logs:
+  nginx_certificates:
+
+networks:
+  ingress_network:
+    external: true
+
+services:
+  nginx:
+    image: 0.0.0.0:5000/nginx_proxy
+    build: nginx
+    ports:
+      - '80:80'
+      - '443:443'
+    configs:
+      - source: nginx_global_config
+        target: /etc/nginx/nginx.conf
+
+      - source: nginx_grafana_config
+        target: /etc/nginx/conf.d/grafana.conf
+
+      - source: nginx_jenkins_config
+        target: /etc/nginx/conf.d/jenkins.conf
+
+      - source: nginx_mycv_config
+        target: /etc/nginx/conf.d/mycv.conf
+
+      - source: nginx_portainer_config
+        target: /etc/nginx/conf.d/portainer.conf
+    volumes:
+      - nginx_logs:/var/log/nginx
+      - nginx_certificates:/etc/letsencrypt
+    networks:
+      - ingress_network
+    deploy:
+      restart_policy:
+        condition: on-failure

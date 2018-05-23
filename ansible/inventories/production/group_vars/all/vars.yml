@@ -4,3 +4,20 @@ admin_ssh_key_name: admin_id_rsa
 jenkins_ssh_key_name: jenkins_id_rsa
 path_to_ssh_admin_public_keys: "{{ path_to_ssh_keys }}/{{ admin_ssh_key_name }}.pub"
 path_to_ssh_jenkins_public_keys: "{{ path_to_ssh_keys }}/{{ jenkins_ssh_key_name }}.pub"
+
+# Stack to deploy
+# Possible values:
+# - ingress (Stack composed of: haproxy + nginx)
+# - ingress-without-haproxy (Stack composed of: nginx)
+# - management (Stack composed of: portainer)
+# - monitoring (Stack composed of: grafana + prometheus + node-exporter + cadvisor)
+# - ci (Stack composed of: jenkins)
+# - mycv (Stack composed of: mycv (my cv website))
+#
+#  Note: The ingress and the ingress-without-haproxy can't work together you have to make a choice
+stacks_to_deploy:
+  - ingress
+  - management
+  - monitoring
+  - ci
+  - mycv

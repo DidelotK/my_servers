@@ -1,0 +1,21 @@
+version: '3.6'
+
+volumes:
+  mycv_logs:
+
+networks:
+  ingress_network:
+    external: true
+
+services:
+  mycv:
+    image: didelotkev/my_cv
+    volumes:
+      - mycv_logs:/var/log/nginx
+    networks:
+      - ingress_network
+    ports:
+      - 6000:80
+    deploy:
+      restart_policy:
+        condition: on-failure
