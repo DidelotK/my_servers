@@ -109,12 +109,7 @@
       when: registry_started.stdout == ""
 
     - include_tasks: tasks/swarm_deploy_stack.yml
-      loop:
-        - ingress
-        - management
-        - monitoring
-        - ci
-        - mycv
+      loop: "{{ stacks_to_deploy }}"
       loop_control:
         loop_var: stack
 
@@ -129,6 +124,7 @@
       retries: 10
       delay: 5
       changed_when: false
+      when: "'management' in stacks_to_deploy"
 
     - name: Configure portainer admin user.
       uri:
@@ -144,4 +140,6 @@
       register: configure_portainer_admin_user_result
       changed_when: configure_portainer_admin_user_result.status == 200
       failed_when: configure_portainer_admin_user_result.status != 409 and configure_portainer_admin_user_result.status != 200
+      when: "'management' in stacks_to_deploy"
+
 ...

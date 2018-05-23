@@ -4,3 +4,10 @@ admin_ssh_key_name: admin_id_rsa
 jenkins_ssh_key_name: jenkins_id_rsa
 path_to_ssh_admin_public_keys: "{{ path_to_ssh_keys }}/{{ admin_ssh_key_name }}.pub"
 path_to_ssh_jenkins_public_keys: "{{ path_to_ssh_keys }}/{{ jenkins_ssh_key_name }}.pub"
+
+stacks_to_deploy:
+  - ingress
+  - management
+  - monitoring
+  - ci
+  - mycv

@@ -6,6 +6,7 @@
 - Make LDAP auth for all apps
 - install Vault to store all secret
 - add prometheus alerts
-- add possibility to choise the services deployed
 - BACKUP SWARM !!! https://docs.docker.com/engine/swarm/admin_guide/#recover-from-disaster
 - Improve indempotence (not indempotent during deploy stack)
+- IMPROVE ANSIBLE (SO DIRTY)
+- variabilize domain in configs
