@@ -18,10 +18,6 @@ services:
   jenkinsmaster:
     image: 0.0.0.0:5000/jenkins_master
     build: jenkins-master
-    secrets:
-      - docker_tls_cert_ca
-      - docker_tls_cert_cert
-      - docker_tls_cert_key
     volumes:
       - jenkins_logs:/var/log/jenkins
       - jenkins_data:/var/jenkins_home
